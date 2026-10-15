@@ -1,0 +1,7 @@
+VERDICT: PASS
+
+- Attack surface is minimal and localhost-only: `GET /health` is the sole route (`apps/api/src/routes/health.ts`), the server binds `host: '127.0.0.1'` explicitly (`apps/api/src/server.ts:11`), Fastify logger is off (no sensitive request logging), and no CORS is configured — nothing exposes the API beyond the machine.
+- No injection risk: zero raw SQL in the diff — Drizzle query-builder/pragma usage only (`apps/api/src/db/index.ts`); `grep` for `raw(`/`sql\``/`exec`/`prepare(` across the branch (minus lockfile/docs) is clean.
+- Secrets handling is correct: `.env.example` contains only empty placeholders; `git check-ignore` confirms `.env`, `.env.local`, `apps/api/.data/app.db`, and `*.db` are all ignored while `.env.example` is not; no db file, `.data/`, or `node_modules` is committed in the tree.
+- Unsafe defaults: none — `DATABASE_PATH` defaults to `apps/api/.data/app.db` (inside the repo, gitignored, parent auto-created with a clear `ConfigError` on failure); env config is Zod-validated at startup with named-var errors, and tests use unique temp dirs cleaned up in teardown.
+- Dependencies are all mainstream (Fastify/Zod/Drizzle/better-sqlite3/Next/React/Vitest/ESLint/Prettier/tsx and their transitive deps — pino, esbuild, sharp, vite, etc.); nothing sketchy or unexpected in the lockfile. Placeholder schema stores only a text `id` — no schema/config choice here makes the later §6 data model easy to abuse.
