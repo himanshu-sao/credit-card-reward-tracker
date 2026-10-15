@@ -13,7 +13,7 @@ next`, top to bottom.
 
 ## Phase 0 — Foundation
 
-- [ ] Monorepo scaffold and tooling
+- [x] Monorepo scaffold and tooling
   - pnpm workspace: `apps/web` (Next.js App Router + TS), `apps/api`
     (Node/Express or Fastify + TS, Zod), `packages/catalog`,
     `packages/rules`, `packages/shared`. Vitest in every package;

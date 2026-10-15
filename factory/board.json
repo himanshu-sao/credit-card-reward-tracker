@@ -1,3 +1,19 @@
 {
-  "jobs": []
+  "jobs": [
+    {
+      "id": "001-monorepo-scaffold",
+      "feature": "Monorepo scaffold and tooling",
+      "branch": "factory/001-monorepo-scaffold",
+      "kind": "feature",
+      "stage": "review",
+      "round": 2,
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-15T04:10:00"
+    }
+  ]
 }

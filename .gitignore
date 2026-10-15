@@ -10,12 +10,14 @@ dist/
 out/
 build/
 *.tsbuildinfo
+coverage/
 
 # Env & local data
 .env
 .env.*
-*.local
+!.env.example
 data/
+.data/
 *.sqlite
 *.db
 
