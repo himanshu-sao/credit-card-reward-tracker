@@ -1,0 +1,10 @@
+node_modules
+.pnpm-store
+dist
+.next
+out
+coverage
+.data
+pnpm-lock.yaml
+*.md
+factory/
