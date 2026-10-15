@@ -152,3 +152,12 @@ next`, top to bottom.
     verify tracker/ROI/optimizer responses, export, delete. README
     quickstart verified from a clean clone. Changelog-first commit
     hygiene, `.env.example` complete, dashboard.html wired to board.json.
+
+## Follow-ups from job 001 (post-approval notes)
+
+- [ ] Scaffold polish: apps/web/.prettierignore for .next/; dev.mjs robustness
+  - `pnpm format:check` in apps/web fails when a `.next/` build dir exists
+    (per-package Prettier doesn't see the root .prettierignore) — fix with a
+    one-line `apps/web/.prettierignore` containing `.next/`. Also harden
+    `apps/web/scripts/dev.mjs`: handle the child `error` event and don't map
+    signal kills to exit 0. Approved as follow-ups in job 001's decision.md.
