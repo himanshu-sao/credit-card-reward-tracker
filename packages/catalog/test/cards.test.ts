@@ -6,11 +6,11 @@ describe('seed cards', () => {
   it('has exactly six cards', () => {
     expect(cards).toHaveLength(6);
   });
-  it('carries the doc §1.5 fees and a 253500 total', () => {
+  it('carries the doc §1.5 fees (total 283500 — the doc\'s $2,535 figure mis-sums its own table)', () => {
     expect(cards.map((c) => c.fee_cents).sort((a, b) => a - b)).toEqual([
       9500, 15000, 49500, 55000, 65000, 89500,
     ]);
-    expect(cards.reduce((sum, c) => sum + c.fee_cents, 0)).toBe(253500);
+    expect(cards.reduce((sum, c) => sum + c.fee_cents, 0)).toBe(283500);
   });
   it('has unique ids', () => {
     expect(new Set(cards.map((c) => c.id)).size).toBe(6);
