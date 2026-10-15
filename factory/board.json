@@ -5,7 +5,7 @@
       "feature": "Monorepo scaffold and tooling",
       "branch": "factory/001-monorepo-scaffold",
       "kind": "feature",
-      "stage": "spec",
+      "stage": "build",
       "round": 0,
       "reviews": {
         "security": "pending",
@@ -13,7 +13,7 @@
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-15T00:20:00"
+      "updatedAt": "2026-10-15T00:40:00"
     }
   ]
 }
