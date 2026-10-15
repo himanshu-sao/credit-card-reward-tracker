@@ -45,13 +45,24 @@ message naming the variable.
 | Variable        | Applies to    | Default                 | Description                                              |
 | --------------- | ------------- | ----------------------- | -------------------------------------------------------- |
 | `DATABASE_PATH` | API           | `apps/api/.data/app.db` | SQLite file path. Parent dirs are created if missing.    |
-| `API_PORT`      | API           | `4000`                  | Port the API listens on. Mutually exclusive with `PORT`. |
-| `PORT`          | Web (and API) | `3000` for web          | Web dev port; the API accepts it as its port if `API_PORT` is unset. Do not set both. |
+| `API_PORT`      | API           | `4000`                  | Port the API listens on. Wins over `PORT` for the API.   |
+| `PORT`          | Web (and API) | `3000` for web          | Web dev port; the API falls back to it if `API_PORT` is unset. |
+
+Both dev processes read the root `.env` (real environment variables always
+win over file values).
 
 ### Changing ports for concurrent web + API
 
-The two processes never share a port by default (web 3000, API 4000). To change
-either one, set its variable in `.env` or inline, e.g.:
+The two processes never share a port by default (web 3000, API 4000). To
+change them, set `PORT` (web) and `API_PORT` (API) in `.env`:
+
+```sh
+# .env
+PORT=3100
+API_PORT=4100
+```
+
+or inline for a single run:
 
 ```sh
 API_PORT=4100 pnpm --filter api dev

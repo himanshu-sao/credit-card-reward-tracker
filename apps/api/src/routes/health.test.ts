@@ -10,12 +10,14 @@ const dir = mkdtempSync(path.join(tmpdir(), 'ccrt-api-'));
 const dbPath = path.join(dir, `test-${process.pid}-${Date.now()}.db`);
 
 let app: Awaited<ReturnType<typeof buildApp>>;
+let db: ReturnType<typeof createDb>;
 
 beforeAll(() => {
-  createDb(dbPath); // proves the Drizzle/better-sqlite3 wiring against a temp file
+  db = createDb(dbPath); // proves the Drizzle/better-sqlite3 wiring against a temp file
 });
 
 afterAll(async () => {
+  db.$client.close();
   await app.close();
   rmSync(dir, { recursive: true, force: true });
 });

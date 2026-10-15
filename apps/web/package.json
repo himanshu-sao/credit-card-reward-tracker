@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node scripts/dev.mjs",
     "build": "next build",
     "start": "next start",
     "test": "vitest run",
@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@ccrt/shared": "workspace:*",
+    "dotenv": "^17.4.2",
     "next": "^15.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"

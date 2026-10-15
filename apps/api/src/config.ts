@@ -13,15 +13,13 @@ const portSchema = z
   .refine((v) => v === '' || Number(v) <= 65535, 'must be <= 65535')
   .transform((v) => (v === '' ? undefined : Number(v)));
 
-const envSchema = z
-  .object({
-    DATABASE_PATH: z.string().trim().optional(),
-    API_PORT: portSchema.optional(),
-    PORT: portSchema.optional(),
-  })
-  .refine((env) => !(env.API_PORT !== undefined && env.PORT !== undefined), {
-    message: 'API_PORT and PORT are both set; set only one',
-  });
+const envSchema = z.object({
+  DATABASE_PATH: z.string().trim().optional(),
+  // API_PORT wins when both are set (a root .env serving web + API sets
+  // PORT for the web client and API_PORT for this service).
+  API_PORT: portSchema.optional(),
+  PORT: portSchema.optional(),
+});
 
 export type AppConfig = {
   databasePath: string;

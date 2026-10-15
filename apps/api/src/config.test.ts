@@ -44,10 +44,9 @@ describe('loadConfig', () => {
     expect(cfg.port).toBe(DEFAULT_API_PORT);
   });
 
-  it('rejects setting both API_PORT and PORT with a readable error', async () => {
-    await expect(loadConfig({ API_PORT: '4001', PORT: '4002' })).rejects.toThrow(
-      /API_PORT and PORT are both set/,
-    );
+  it('prefers API_PORT when both it and PORT are set (concurrent web + API)', async () => {
+    const cfg = await loadConfig({ API_PORT: '4001', PORT: '4002' });
+    expect(cfg.port).toBe(4001);
   });
 
   it('throws ConfigError, not an opaque better-sqlite3 trace, when the parent is a file', async () => {
