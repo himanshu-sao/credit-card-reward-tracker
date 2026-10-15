@@ -2,7 +2,9 @@
 
 STATUS: GREEN
 
-Commit: `2423c45` — `feat(scaffold): pnpm monorepo with five packages, tooling, env contract, /health` (51 files, on branch `factory/001-monorepo-scaffold`).
+Initial commit: `2423c45` — `feat(scaffold): pnpm monorepo with five packages, tooling, env contract, /health` (51 files, on branch `factory/001-monorepo-scaffold`).
+
+Round-1 rework commit: `55a0772` — `fix(scaffold): web dev honors root .env; API_PORT takes precedence over PORT` (8 files). See "Round-1 rework" at the bottom.
 
 ## What changed
 
@@ -133,3 +135,22 @@ Pass 2 fixed: dotenv load condition (was "only if no relevant env set" — now a
 ## Environment note (sandbox)
 
 Verification ran inside this machine's sandbox. Full `pnpm install` (network fetch of ~590 packages) and native builds all succeeded inside it, so no difference is expected on a normal clone. pnpm was not previously on PATH; activated via corepack (`pnpm@10.20.0`, matching the root `packageManager`).
+
+## Round-1 rework (commit 55a0772)
+
+Code review (round 1) returned CHANGES on one finding: the README claimed the root `.env` overrides the web dev port, but Next.js loads env files only from `apps/web/` — reproduced exactly (root `.env` `PORT=3593` → web booted on 3000, 3593 refused). Security and api reviews passed.
+
+Fix chosen: make the documented contract true rather than weaken the docs.
+
+- `apps/web/scripts/dev.mjs` — the web `dev` script now loads the repo-root `.env` (if present; real env vars still win) and then spawns `next dev` via the package's resolved `.bin` path. Verified live:
+  - root `.env` `PORT=3593` + `pnpm --filter web dev` → HTTP 200 on 3593, nothing on 3000
+  - inline `PORT=3594` beats `.env`'s 3593 → HTTP 200 on 3594
+  - no `.env` → default 3000, HTTP 200
+- The fix surfaced a real contradiction: with web reading the root `.env`, the natural concurrent-setup `.env` (`PORT=3100` + `API_PORT=4100`) tripped the API's old "API_PORT and PORT are both set" rule and the API refused to boot (reproduced: `ConfigError: Invalid or conflicting config: environment: API_PORT and PORT are both set; set only one`). The config now resolves precedence — `API_PORT` wins, `PORT` is the API fallback — matching the README table's own stated semantics. Test changed from "rejects both" to "prefers API_PORT when both are set".
+- README + `.env.example` rewritten to the true contract: both dev processes read the root `.env`; `API_PORT` wins for the API; relative `DATABASE_PATH` resolves against `apps/api/` (verified live both ways — `DATABASE_PATH=apps/api/.data/app.db` in the root `.env` created `apps/api/apps/api/.data/app.db`, so the doc says relative paths resolve against `apps/api/`).
+- Reviewer nit fixed: `health.test.ts` now closes the `better-sqlite3` handle it opens.
+- Concurrent web + API from one root `.env` re-verified end-to-end after the fix:
+  - `.env` with `PORT=3100` + `API_PORT=4100`, both dev servers up
+  - `curl http://localhost:3100/` → HTTP 200 (web)
+  - `curl http://127.0.0.1:4100/health` → HTTP 200, body `{"status":"ok"}` (API)
+- Full gates re-run green after the rework: `pnpm -r test` exit 0 (14 tests, 5 packages — 10 in apps/api), `pnpm -r lint` exit 0, `pnpm format:check` exit 0, `tsc --noEmit` clean for apps/api and apps/web. No dev servers or temp files left behind.
