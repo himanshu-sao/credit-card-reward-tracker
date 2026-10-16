@@ -93,3 +93,28 @@ and Saks deviate).
 Core schemas 908b516^..cbed54d; seeds 908b516, 45936a3, a0495fe, 4866b6c,
 b889904, 26ce1aa, d5d1bcf, a6f1e85; tests d404d5f..6fd2143; simplification
 2f867dd, 6d98c98; doc fix ed03896.
+
+## Rework (round 1)
+
+Three fixes from review-code round 1, no other changes:
+
+1. `packages/catalog/src/benefits-amex-platinum.ts:3` — SOURCE_URL
+   corrected to the personal Platinum Card page:
+   `https://www.americanexpress.com/us/credit-cards/card/platinum`
+   (was the Business Platinum path with `business/`).
+2. `packages/catalog/src/cards.ts:3` — stale doc comment `total = 253500`
+   corrected to `total = 283500` (matches deviation 2 / doc / test).
+3. `packages/catalog/test/verification.test.ts` — test title dropped the
+   unasserted clause "confirmed rows never do by requirement" (data has a
+   legitimate confirmed-with-note row); now reads "every verify row
+   carries a note", which is exactly what the body asserts.
+
+Gates re-run after fixes, all green:
+
+- `pnpm -r test`: Test Files 11 passed (11), Tests 60 passed (60) —
+  shared 1, api 10, rules 1, web 1, catalog 47; 0 failures.
+- `pnpm -r lint`: all 5 packages Done, no errors.
+- `pnpm format:check`: "All matched files use Prettier code style!" at
+  root and in all 5 workspace projects; exit 0.
+
+STATUS: GREEN

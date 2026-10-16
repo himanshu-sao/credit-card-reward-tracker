@@ -23,7 +23,7 @@ describe('verification flags (criterion 4)', () => {
     });
   });
 
-  it('every verify row carries a note; confirmed rows never do by requirement', () => {
+  it('every verify row carries a note', () => {
     for (const row of verifyRows()) {
       expect(row.note).toBeTruthy();
     }

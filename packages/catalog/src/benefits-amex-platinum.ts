@@ -1,6 +1,6 @@
 import { BenefitSchema, type Benefit } from './benefit.js';
 
-const SOURCE_URL = 'https://www.americanexpress.com/us/credit-cards/card/business/platinum';
+const SOURCE_URL = 'https://www.americanexpress.com/us/credit-cards/card/platinum';
 const CARD_ID = 'amex-platinum';
 const FROM = '2026-10-01';
 const VERIFIED = '2026-10-15';

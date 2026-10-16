@@ -1,6 +1,6 @@
 import { CardSchema, type Card } from './card.js';
 
-/** Seed cards (doc §1.5). Fees in integer cents; total = 253500. */
+/** Seed cards (doc §1.5). Fees in integer cents; total = 283500. */
 export const cards: Card[] = CardSchema.array().parse([
   {
     id: 'chase-sapphire-preferred',
