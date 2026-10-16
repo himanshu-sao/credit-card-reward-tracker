@@ -39,7 +39,7 @@ next`, top to bottom.
     Cents-per-point currencies (MR, UR, Hilton, Marriott, Bilt) as
     configurable entities, doc §3.6. Unit tests: schema rejects bad rows;
     totals ($2,535 fees) match doc §1.5; each benefit has a source_url.
-- [ ] Reset engine: period generation for every reset anchor
+- [x] Reset engine: period generation for every reset anchor
   - `packages/rules`: given (benefit, card open/anniversary/fee dates, "as
     of" date) → BenefitInstance period list, per doc §3.2 anchor types:
     calendar year, half-year (Jan–Jun/Jul–Dec), quarter, calendar month,
@@ -166,3 +166,15 @@ next`, top to bottom.
     BenefitSchema; make cents-per-point user-configurable per doc §3.6
     (seed baseline is 1 for all five currencies); fix the cadence-transform
     label for hypothetical multi_year intervals ≠ 4 years.
+
+## Follow-ups from job 003 (post-approval notes)
+
+- [ ] Review discipline: PASS reports must paste exact asserted values for count-based acceptance criteria
+  - The job 003 code review's PASS report miscounted AC4's instance count (wrote "exactly 1
+    instance ending 2029-09-30"; the actual test asserts 2 instances, first ending 2029-09-30,
+    second starting 2029-10-01 ≤ asOf). Build and test were correct; the reviewer's prose was
+    not. For count-based ACs, reviewers should paste the asserted values rather than paraphrase.
+  - Still open from job 002: catalog `every_4_years` cadence-label fix for multi_year intervals
+    ≠ 4 (stays on the existing follow-ups item), and the recurring 128k output-token crashes
+    that hit builder/reviewer runs this job are worth investigating at the environment level
+    (e.g. raising CLAUDE_CODE_MAX_OUTPUT_TOKENS).

@@ -29,6 +29,21 @@
       },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T00:00:00"
+    },
+    {
+      "id": "003-reset-engine",
+      "feature": "Reset engine: period generation for every reset anchor",
+      "branch": "factory/003-reset-engine",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-16T06:10:00"
     }
   ]
 }
