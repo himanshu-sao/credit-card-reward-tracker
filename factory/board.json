@@ -20,15 +20,15 @@
       "feature": "Benefit catalog package with six-card seed data",
       "branch": "factory/002-benefit-catalog",
       "kind": "feature",
-      "stage": "build",
-      "round": 0,
+      "stage": "review",
+      "round": 1,
       "reviews": {
         "security": "pending",
         "code": "pending",
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-15T16:00:00"
+      "updatedAt": "2026-10-15T20:00:00"
     }
   ]
 }
