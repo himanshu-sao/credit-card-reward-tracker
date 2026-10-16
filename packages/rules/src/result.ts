@@ -31,7 +31,3 @@ export const GenerateResultSchema = z.discriminatedUnion('kind', [
   z.object({ kind: z.literal('no_periods'), reason: z.string().min(1) }),
 ]);
 export type GenerateResult = z.infer<typeof GenerateResultSchema>;
-
-export function noPeriods(reason: string): GenerateResult {
-  return { kind: 'no_periods', reason };
-}

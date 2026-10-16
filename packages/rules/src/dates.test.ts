@@ -4,8 +4,6 @@ import {
   addYears,
   compareISO,
   dayBefore,
-  dayOfYear,
-  endOfMonth,
   halfYearOf,
   isValidISO,
   parseISO,
@@ -66,10 +64,7 @@ describe('addYears', () => {
 });
 
 describe('calendar helpers', () => {
-  it('dayOfYear / quarter / half-year boundaries', () => {
-    expect(dayOfYear('2026-01-01')).toBe(1);
-    expect(dayOfYear('2026-12-31')).toBe(365);
-    expect(dayOfYear('2024-12-31')).toBe(366); // leap year
+  it('quarter / half-year boundaries', () => {
     expect(quarterOf('2026-01-01')).toBe(1);
     expect(quarterOf('2026-03-31')).toBe(1);
     expect(quarterOf('2026-04-01')).toBe(2);
@@ -78,13 +73,11 @@ describe('calendar helpers', () => {
     expect(halfYearOf('2026-07-01')).toBe(2); // Edge case 3: Jul 1 opens H2
   });
 
-  it('startOf* / endOfMonth anchors', () => {
+  it('startOf* and dayBefore anchors', () => {
     expect(startOfYear('2026-10-16')).toBe('2026-01-01');
     expect(startOfQuarter('2026-07-01')).toBe('2026-07-01');
     expect(startOfHalfYear('2026-12-31')).toBe('2026-07-01');
     expect(startOfMonth('2026-03-31')).toBe('2026-03-01');
-    expect(endOfMonth('2024-02-10')).toBe('2024-02-29');
-    expect(endOfMonth('2025-02-10')).toBe('2025-02-28');
     expect(dayBefore('2026-03-01')).toBe('2026-02-28');
     expect(dayBefore('2026-01-01')).toBe('2025-12-31');
   });

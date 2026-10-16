@@ -4,7 +4,11 @@
 
 import { BenefitSchema, allBenefits, type Benefit, type ResetAnchor } from '@ccrt/catalog';
 
-/** Look up a seed benefit by id (fails loudly if the id is unknown). */
+/**
+ * Look up a seed benefit by id (fails loudly if the id is unknown). Tests
+ * that need different effective dates override them on a spread-copy —
+ * never by editing the catalog seed data.
+ */
 export function seedBenefit(id: string): Benefit {
   const benefit = allBenefits.find((b) => b.id === id);
   if (!benefit) throw new Error(`unknown seed benefit id: ${id}`);

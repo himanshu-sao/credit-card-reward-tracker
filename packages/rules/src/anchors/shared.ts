@@ -7,7 +7,7 @@
 // inclusive period_end (see result.ts).
 
 import type { Benefit } from '@ccrt/catalog';
-import { compareISO, dayBefore } from '../dates.js';
+import { compareISO } from '../dates.js';
 import type { BenefitInstance } from '../result.js';
 
 /** Refuse to generate more than this many periods for one benefit. */
@@ -60,19 +60,4 @@ export function buildInstances(
     });
   }
   return instances;
-}
-
-/**
- * Pair a lazily-yielded sequence of consecutive period starts into inclusive
- * bounds: each period ends the day before the next one starts. The last
- * start in the stream must be a sentinel one past the final generated period.
- */
-export function* withInclusiveEnds(
-  starts: Iterable<string>,
-): Generator<{ start: string; end: string }> {
-  let prev: string | undefined;
-  for (const start of starts) {
-    if (prev !== undefined) yield { start: prev, end: dayBefore(start) };
-    prev = start;
-  }
 }

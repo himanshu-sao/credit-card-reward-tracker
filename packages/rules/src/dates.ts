@@ -68,14 +68,6 @@ export function addYears(date: string, n: number): string {
   return formatISO([year + n, month, targetDay]);
 }
 
-/** Day of year, 1-based (Jan 1 → 1, Dec 31 → 365 or 366 in leap years). */
-export function dayOfYear(date: string): number {
-  const [year, month, day] = parseISO(date);
-  let n = day;
-  for (let m = 1; m < month; m++) n += daysInMonth(year, m);
-  return n;
-}
-
 /** Calendar quarter, 1–4. */
 export function quarterOf(date: string): number {
   return Math.ceil(parseISO(date)[1] / 3);
@@ -107,12 +99,6 @@ export function startOfHalfYear(date: string): string {
 export function startOfMonth(date: string): string {
   const [year, month] = parseISO(date);
   return formatISO([year, month, 1]);
-}
-
-/** Last day of the calendar month containing `date`. */
-export function endOfMonth(date: string): string {
-  const [year, month] = parseISO(date);
-  return formatISO([year, month, daysInMonth(year, month)]);
 }
 
 /** Day before `date` (one-day safety margin: period_end is inclusive). */

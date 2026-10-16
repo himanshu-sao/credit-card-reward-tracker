@@ -5,60 +5,50 @@
 import {
   addMonths,
   compareISO,
+  dayBefore,
   startOfHalfYear,
   startOfMonth,
   startOfQuarter,
   startOfYear,
 } from '../dates.js';
-import { buildInstances, withInclusiveEnds, type AnchorInput } from './shared.js';
+import { buildInstances, type AnchorInput } from './shared.js';
 import type { BenefitInstance } from '../result.js';
 
-type GridStart = (date: string) => string;
+type CalendarAnchor = 'calendar_year' | 'half_year' | 'quarter' | 'month';
 
-const GRID: Record<'calendar_year' | 'half_year' | 'quarter' | 'month', GridStart> = {
-  calendar_year: startOfYear,
-  half_year: startOfHalfYear,
-  quarter: startOfQuarter,
-  month: startOfMonth,
+/** Grid-start function and step in months for each calendar anchor. */
+const GRID: Record<CalendarAnchor, { start: (date: string) => string; stepMonths: number }> = {
+  calendar_year: { start: startOfYear, stepMonths: 12 },
+  half_year: { start: startOfHalfYear, stepMonths: 6 },
+  quarter: { start: startOfQuarter, stepMonths: 3 },
+  month: { start: startOfMonth, stepMonths: 1 },
 };
 
 /**
  * Generate periods for a calendar-grid anchor. Periods begin at the grid
- * start containing `open_date`; effective_from gating is end-based (a period
- * is dropped only when it ends before the benefit became effective — see
- * buildInstances), so a period straddling effective_from is kept, matching
- * AC1. Mid-year opening flags the first period `prorated` with the full
- * amount (confirmed answer 1).
+ * start containing `open_date` (mid-period opening, flagged not scaled);
+ * effective_from gating is end-based (a period is dropped only when it ends
+ * before the benefit became effective — see buildInstances), so a period
+ * straddling effective_from is kept, matching AC1.
  */
 export function calendarInstances(
-  input: AnchorInput & { anchor: 'calendar_year' | 'half_year' | 'quarter' | 'month' },
+  input: AnchorInput & { anchor: CalendarAnchor },
 ): BenefitInstance[] {
-  const gridStart = GRID[input.anchor];
-  // Step length in months between grid starts.
-  const step = { calendar_year: 12, half_year: 6, quarter: 3, month: 1 }[input.anchor];
-  return buildInstances(
-    input,
-    withInclusiveEnds(lazyGridStarts(gridStart, step, input.openDate, input.asOf)),
-  );
+  const grid = GRID[input.anchor];
+  return buildInstances(input, gridBounds(grid.start, grid.stepMonths, input.openDate, input.asOf));
 }
 
-function* lazyGridStarts(
-  gridStart: GridStart,
+function* gridBounds(
+  gridStart: (date: string) => string,
   step: number,
   from: string,
   asOf: string,
-): Generator<string> {
+): Generator<{ start: string; end: string }> {
   let start = gridStart(from);
-  // Grid starts strictly before `from` are skipped: the first period is the
-  // one containing `from` (mid-period opening, flagged not scaled).
   for (;;) {
-    yield start;
     const next = addMonths(start, step);
-    if (compareISO(next, asOf) > 0) {
-      // Sentinel one past the last generated period, so its end is set.
-      yield next;
-      return;
-    }
+    yield { start, end: dayBefore(next) };
+    if (compareISO(next, asOf) > 0) return;
     start = next;
   }
 }
