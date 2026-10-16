@@ -161,3 +161,8 @@ next`, top to bottom.
     one-line `apps/web/.prettierignore` containing `.next/`. Also harden
     `apps/web/scripts/dev.mjs`: handle the child `error` event and don't map
     signal kills to exit 0. Approved as follow-ups in job 001's decision.md.
+  - From job 002 decision.md: add an HTTPS `.refine()` to the catalog
+    source_url schema before any untrusted-input API consumes
+    BenefitSchema; make cents-per-point user-configurable per doc §3.6
+    (seed baseline is 1 for all five currencies); fix the cadence-transform
+    label for hypothetical multi_year intervals ≠ 4 years.
