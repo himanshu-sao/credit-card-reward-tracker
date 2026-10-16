@@ -117,7 +117,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     value_descriptor: 'Unlimited visits',
     cadence: 'ongoing',
     reset_anchor: { type: 'ongoing' },
-    rules: 'Enrollment required.',
     enrollment_required: true,
     effective_from: FROM,
     effective_to: null,

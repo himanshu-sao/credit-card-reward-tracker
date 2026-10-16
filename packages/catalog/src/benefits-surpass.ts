@@ -84,7 +84,6 @@ export const surpassBenefits: Benefit[] = BenefitSchema.array().parse([
     value_descriptor: 'Status',
     cadence: 'ongoing',
     reset_anchor: { type: 'ongoing' },
-    rules: 'Enrollment required.',
     enrollment_required: true,
     effective_from: FROM,
     effective_to: null,

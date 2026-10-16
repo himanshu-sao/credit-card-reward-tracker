@@ -56,7 +56,7 @@ export const BenefitSchema = z
     cadence: CadenceSchema,
     reset_anchor: ResetAnchorSchema,
     /** Eligible merchants, minimums, portal requirements. */
-    rules: z.string(),
+    rules: z.string().default(''),
     enrollment_required: z.boolean(),
     status: StatusSchema,
     effective_from: DateString,
