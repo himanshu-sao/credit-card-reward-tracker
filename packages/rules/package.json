@@ -12,6 +12,7 @@
     "format:check": "prettier --check ."
   },
   "dependencies": {
+    "@ccrt/catalog": "workspace:*",
     "@ccrt/shared": "workspace:*",
     "zod": "^4.1.13"
   },
