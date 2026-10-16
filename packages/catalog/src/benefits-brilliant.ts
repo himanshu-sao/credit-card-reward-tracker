@@ -1,7 +1,6 @@
 import { BenefitSchema, type Benefit } from './benefit.js';
 
-const SOURCE_URL =
-  'https://www.americanexpress.com/us/credit-cards/card/marriott-bonvoy-brilliant';
+const SOURCE_URL = 'https://www.americanexpress.com/us/credit-cards/card/marriott-bonvoy-brilliant';
 const CARD_ID = 'marriott-bonvoy-brilliant';
 const FROM = '2026-10-01';
 const VERIFIED = '2026-10-15';
@@ -22,7 +21,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'dining',
     amount_cents: 2500,
     value_descriptor: '$25 monthly (calendar-year overall)',
-    cadence: 'monthly',
     reset_anchor: { type: 'month' },
     rules: 'Restaurants worldwide.',
     enrollment_required: false,
@@ -37,7 +35,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'hotel',
     amount_cents: null,
     value_descriptor: 'Up to 85K points (per sources)',
-    cadence: 'annually',
     reset_anchor: { type: 'renewal' },
     rules: 'Each renewal.',
     enrollment_required: false,
@@ -53,7 +50,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'travel',
     amount_cents: 10000,
     value_descriptor: '$100',
-    cadence: 'monthly',
     reset_anchor: { type: 'month' },
     rules: 'Confirm eligible properties and frequency.',
     enrollment_required: false,
@@ -69,7 +65,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'status',
     amount_cents: null,
     value_descriptor: '25 elite night credits',
-    cadence: 'annually',
     reset_anchor: { type: 'calendar_year' },
     rules: 'Counts toward next Marriott tier.',
     enrollment_required: false,
@@ -84,7 +79,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'status',
     amount_cents: null,
     value_descriptor: 'Status',
-    cadence: 'ongoing',
     reset_anchor: { type: 'ongoing' },
     rules: 'Complimentary Platinum Elite status.',
     enrollment_required: false,
@@ -99,7 +93,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'travel',
     amount_cents: 12000,
     value_descriptor: '$120 (Global Entry); up to $85 (TSA PreCheck)',
-    cadence: 'every_4_years',
     reset_anchor: { type: 'multi_year', interval_years: 4 },
     rules: 'Global Entry every 4 years; sources differ on TSA interval.',
     enrollment_required: false,
@@ -115,7 +108,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'travel',
     amount_cents: null,
     value_descriptor: 'Unlimited visits',
-    cadence: 'ongoing',
     reset_anchor: { type: 'ongoing' },
     enrollment_required: true,
     effective_from: FROM,
@@ -129,7 +121,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'hotel',
     amount_cents: null,
     value_descriptor: 'Choice of benefit (Suite Night Awards / free night / mattress discount)',
-    cadence: 'annually',
     reset_anchor: { type: 'spend_threshold', threshold_cents: 6000000 },
     rules: 'After $60,000 calendar-year spend.',
     enrollment_required: false,
@@ -144,7 +135,6 @@ export const brilliantBenefits: Benefit[] = BenefitSchema.array().parse([
     category: 'rewards',
     amount_cents: null,
     value_descriptor: '6x Marriott properties',
-    cadence: 'ongoing',
     reset_anchor: { type: 'ongoing' },
     rules: '6x at Marriott properties.',
     enrollment_required: false,

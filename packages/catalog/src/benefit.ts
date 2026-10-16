@@ -17,6 +17,23 @@ export const CadenceSchema = z.enum([
 ]);
 export type Cadence = z.infer<typeof CadenceSchema>;
 
+/** Cadence implied by each reset anchor (every anchor maps to exactly one). */
+const ANCHOR_CADENCE: Record<ResetAnchor['type'], Cadence> = {
+  none: 'none',
+  ongoing: 'ongoing',
+  month: 'monthly',
+  quarter: 'quarterly',
+  half_year: 'semi_annually',
+  anniversary: 'annually',
+  renewal: 'annually',
+  calendar_year: 'annually',
+  multi_year: 'every_4_years',
+  per_stay: 'per_stay',
+  per_purchase: 'per_purchase',
+  per_booking: 'per_booking',
+  spend_threshold: 'annually',
+};
+
 /** When the benefit's allowance resets. Most anchors carry no extra data. */
 export const ResetAnchorSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('none') }),
@@ -53,7 +70,7 @@ export const BenefitSchema = z
     amount_cents: z.number().int().nonnegative().nullable(),
     /** Describes non-monetary value (e.g. 'Status') when amount_cents is null. */
     value_descriptor: z.string(),
-    cadence: CadenceSchema,
+    cadence: CadenceSchema.optional(),
     reset_anchor: ResetAnchorSchema,
     /** Eligible merchants, minimums, portal requirements. */
     rules: z.string().default(''),
@@ -68,6 +85,7 @@ export const BenefitSchema = z
     /** Required whenever verification === 'verify'. */
     note: z.string().optional(),
   })
+  .transform((row) => ({ ...row, cadence: row.cadence ?? ANCHOR_CADENCE[row.reset_anchor.type] }))
   .superRefine((row, ctx) => {
     if (row.effective_to && row.effective_from > row.effective_to) {
       ctx.addIssue({

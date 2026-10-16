@@ -1,10 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  activeBenefits,
-  allBenefits,
-  BenefitSchema,
-  currencies,
-} from '../src/index.js';
+import { activeBenefits, allBenefits, BenefitSchema, currencies } from '../src/index.js';
 import type { Benefit } from '../src/index.js';
 
 const valid: Benefit = {
@@ -33,8 +28,7 @@ describe('doc §7 edge cases', () => {
     expect(BenefitSchema.safeParse({ ...valid, amount_cents: 100.5 }).success).toBe(false);
     expect(BenefitSchema.safeParse({ ...valid, amount_cents: 0 }).success).toBe(true);
     expect(
-      BenefitSchema.safeParse({ ...valid, amount_cents: null, value_descriptor: 'Status' })
-        .success,
+      BenefitSchema.safeParse({ ...valid, amount_cents: null, value_descriptor: 'Status' }).success,
     ).toBe(true);
   });
 
@@ -47,8 +41,11 @@ describe('doc §7 edge cases', () => {
   // 2. effective window inversion
   it('rejects effective_from after effective_to', () => {
     expect(
-      BenefitSchema.safeParse({ ...valid, effective_from: '2026-10-02', effective_to: '2026-10-01' })
-        .success,
+      BenefitSchema.safeParse({
+        ...valid,
+        effective_from: '2026-10-02',
+        effective_to: '2026-10-01',
+      }).success,
     ).toBe(false);
   });
 
@@ -91,9 +88,7 @@ describe('doc §7 edge cases', () => {
 
   // 7. verify requires note
   it('a verify row without a note fails', () => {
-    expect(
-      BenefitSchema.safeParse({ ...valid, verification: 'verify' }).success,
-    ).toBe(false);
+    expect(BenefitSchema.safeParse({ ...valid, verification: 'verify' }).success).toBe(false);
   });
 
   // 9. undated rows default to 2026-10-01; only CSP hotel credit and Saks carry doc dates

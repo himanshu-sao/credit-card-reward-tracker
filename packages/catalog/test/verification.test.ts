@@ -29,7 +29,7 @@ describe('verification flags (criterion 4)', () => {
     }
   });
 
-  it('flags the doc\'s Verify rows', () => {
+  it("flags the doc's Verify rows", () => {
     for (const id of [
       'csp-global-entry',
       'csp-earning',

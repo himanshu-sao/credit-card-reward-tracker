@@ -6,7 +6,7 @@ describe('seed cards', () => {
   it('has exactly six cards', () => {
     expect(cards).toHaveLength(6);
   });
-  it('carries the doc §1.5 fees (total 283500 — the doc\'s $2,535 figure mis-sums its own table)', () => {
+  it("carries the doc §1.5 fees (total 283500 — the doc's $2,535 figure mis-sums its own table)", () => {
     expect(cards.map((c) => c.fee_cents).sort((a, b) => a - b)).toEqual([
       9500, 15000, 49500, 55000, 65000, 89500,
     ]);
@@ -20,9 +20,7 @@ describe('seed cards', () => {
     for (const card of cards) expect(ids.has(card.currency_id)).toBe(true);
   });
   it('rejects a card with an unknown currency_id at the seed level', () => {
-    expect(
-      cards.some((c) => !currencies.some((cur) => cur.id === c.currency_id)),
-    ).toBe(false);
+    expect(cards.some((c) => !currencies.some((cur) => cur.id === c.currency_id))).toBe(false);
   });
 });
 
@@ -41,8 +39,6 @@ describe('seed currencies', () => {
     }
   });
   it('rejects a non-integer valuation', () => {
-    expect(
-      CardSchema.safeParse({ ...cards[0], id: 'x', fee_cents: 1.5 }).success,
-    ).toBe(false);
+    expect(CardSchema.safeParse({ ...cards[0], id: 'x', fee_cents: 1.5 }).success).toBe(false);
   });
 });

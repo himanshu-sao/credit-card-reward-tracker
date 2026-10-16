@@ -54,8 +54,7 @@ describe('BenefitSchema strictness', () => {
   it('accepts amount_cents 0 and null', () => {
     expect(BenefitSchema.safeParse({ ...valid, amount_cents: 0 }).success).toBe(true);
     expect(
-      BenefitSchema.safeParse({ ...valid, amount_cents: null, value_descriptor: 'Status' })
-        .success,
+      BenefitSchema.safeParse({ ...valid, amount_cents: null, value_descriptor: 'Status' }).success,
     ).toBe(true);
   });
 });
