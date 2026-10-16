@@ -14,6 +14,21 @@
       },
       "decision": "APPROVE",
       "updatedAt": "2026-10-15T05:00:00"
+    },
+    {
+      "id": "002-benefit-catalog",
+      "feature": "Benefit catalog package with six-card seed data",
+      "branch": "factory/002-benefit-catalog",
+      "kind": "feature",
+      "stage": "review",
+      "round": 2,
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-15T23:00:00"
     }
   ]
 }

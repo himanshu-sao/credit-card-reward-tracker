@@ -35,7 +35,7 @@ A points-and-miles enthusiast or frequent traveler who holds 3+ premium cards ac
 | 5 | Bilt Palladium Card | $495 |
 | 6 | Marriott Bonvoy Brilliant American Express (assumed to be the "Amex Brilliant" card) | $650 |
 
-Annual fees total $2,535 across the six cards, which is why per-card ROI tracking is the core value proposition.
+Annual fees total $2,835 across the six cards, which is why per-card ROI tracking is the core value proposition.
 
 ## 2. Core user flows
 1. **Onboarding:** select cards from a catalog, enter each card's open date (needed for anniversary-based benefits), choose which benefits to enroll in or ignore, set notification preferences.

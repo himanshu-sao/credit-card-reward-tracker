@@ -1,0 +1,102 @@
+import { BenefitSchema, type Benefit } from './benefit.js';
+
+const SOURCE_URL = 'https://www.americanexpress.com/us/credit-cards/card/hilton-honors-surpass';
+const CARD_ID = 'hilton-amex-surpass';
+const FROM = '2026-10-01';
+const VERIFIED = '2026-10-15';
+
+const base = {
+  card_id: CARD_ID,
+  source_url: SOURCE_URL,
+  last_verified_at: VERIFIED,
+  status: 'active',
+} as const;
+
+/** Doc §5.4 — Hilton Honors American Express Surpass. */
+export const surpassBenefits: Benefit[] = BenefitSchema.array().parse([
+  {
+    ...base,
+    id: 'surpass-statement-credit',
+    name: 'Hilton statement credit',
+    category: 'travel',
+    amount_cents: 5000,
+    value_descriptor: '$50 per quarter (four per year)',
+    reset_anchor: { type: 'quarter' },
+    rules: 'Eligible Hilton purchases.',
+    enrollment_required: false,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'confirmed',
+  },
+  {
+    ...base,
+    id: 'surpass-free-night-reward',
+    name: 'Free Night Reward',
+    category: 'hotel',
+    amount_cents: null,
+    value_descriptor: '1 night',
+    reset_anchor: { type: 'spend_threshold', threshold_cents: 1500000 },
+    rules: 'After $15,000 spend in a calendar year; no automatic anniversary night.',
+    enrollment_required: false,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'confirmed',
+  },
+  {
+    ...base,
+    id: 'surpass-temporary-diamond',
+    name: 'Temporary Diamond status',
+    category: 'status',
+    amount_cents: null,
+    value_descriptor: 'Status',
+    reset_anchor: { type: 'spend_threshold', threshold_cents: 4000000 },
+    rules: 'After $40,000 spend in a calendar year; per sources.',
+    enrollment_required: false,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'verify',
+    note: 'Per sources.',
+  },
+  {
+    ...base,
+    id: 'surpass-gold-status',
+    name: 'Hilton Gold status',
+    category: 'status',
+    amount_cents: null,
+    value_descriptor: 'Status (incl. fifth-night-free on point stays)',
+    reset_anchor: { type: 'ongoing' },
+    rules: 'Includes fifth-night-free on point stays.',
+    enrollment_required: false,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'confirmed',
+  },
+  {
+    ...base,
+    id: 'surpass-national-car-status',
+    name: 'National Car Rental status',
+    category: 'status',
+    amount_cents: null,
+    value_descriptor: 'Status',
+    reset_anchor: { type: 'ongoing' },
+    enrollment_required: true,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'verify',
+    note: 'Enrollment required.',
+  },
+  {
+    ...base,
+    id: 'surpass-earning',
+    name: 'Earning',
+    category: 'rewards',
+    amount_cents: null,
+    value_descriptor: '12x Hilton, 6x U.S. dining/groceries/gas, 3x other',
+    reset_anchor: { type: 'ongoing' },
+    rules: '12x Hilton, 6x U.S. dining, groceries and gas, 3x other.',
+    enrollment_required: false,
+    effective_from: FROM,
+    effective_to: null,
+    verification: 'confirmed',
+  },
+] satisfies Benefit[]);

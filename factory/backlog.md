@@ -28,7 +28,7 @@ next`, top to bottom.
 
 ## Phase 1 — Domain core (no UI, pure logic)
 
-- [ ] Benefit catalog package with six-card seed data
+- [x] Benefit catalog package with six-card seed data
   - `packages/catalog`: Zod-validated types for Card, Benefit (doc §6
     fields: cadence, reset_anchor, eligible-merchant rules,
     enrollment_required, status lifecycle active/changed/retired/grandfathered,
