@@ -12,3 +12,4 @@ export {
   type BenefitInstance,
   type GenerateResult,
 } from './result.js';
+export { RoiInputSchema, instanceKey, type RoiInput } from './roi/input.js';
