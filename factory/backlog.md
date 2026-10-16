@@ -51,7 +51,7 @@ next`, top to bottom.
     exactly at "as of", retired benefits stop generating forward instances
     but keep history. Pure functions, no db, exhaustive unit tests — this
     package is the correctness-critical core; reviewers scrutinize hardest.
-- [ ] ROI math and overlap detection rules
+- [x] ROI math and overlap detection rules
   - `packages/rules`: (a) per-card ROI per doc §3.6 — fee, face value
     available, value used, net position, realistic-value mode (per-benefit
     personal value pct), retired benefits excluded forward but included for

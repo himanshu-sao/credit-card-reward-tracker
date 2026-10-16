@@ -44,6 +44,21 @@
       },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T06:10:00"
+    },
+    {
+      "id": "004-roi-overlap-rules",
+      "feature": "ROI math and overlap detection rules",
+      "branch": "factory/004-roi-overlap-rules",
+      "kind": "feature",
+      "stage": "needs-human",
+      "round": 0,
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-16T13:00:00"
     }
   ]
 }
