@@ -44,6 +44,21 @@
       },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T06:10:00"
+    },
+    {
+      "id": "005-db-schema",
+      "feature": "Database schema, migrations, and health/db wiring",
+      "branch": "factory/005-db-schema",
+      "kind": "feature",
+      "stage": "spec",
+      "round": 0,
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-17T01:15:00"
     }
   ]
 }

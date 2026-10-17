@@ -65,7 +65,7 @@ next`, top to bottom.
 
 ## Phase 2 — API
 
-- [ ] Database schema, migrations, and health/db wiring
+- [x] Database schema, migrations, and health/db wiring
   - `apps/api`: Drizzle schema for doc §6 entities (Card, Benefit,
     UserCard, BenefitInstance, UsageEvent, Transaction, ThresholdTracker,
     Reminder, UserValuation, OverlapRule, CatalogChange), migrations,
