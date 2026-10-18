@@ -3,6 +3,6 @@ import { HealthStatus } from '@ccrt/shared';
 
 describe('@ccrt/web', () => {
   it('resolves @ccrt/shared through the workspace', () => {
-    expect(HealthStatus.parse({ status: 'ok' })).toEqual({ status: 'ok' });
+    expect(HealthStatus.parse({ status: 'ok', db: 'ok' })).toEqual({ status: 'ok', db: 'ok' });
   });
 });
