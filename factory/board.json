@@ -50,7 +50,7 @@
       "feature": "ROI math and overlap detection rules",
       "branch": "factory/004-roi-overlap-rules",
       "kind": "feature",
-      "stage": "needs-human",
+      "stage": "build",
       "round": 0,
       "reviews": {
         "security": "pending",
