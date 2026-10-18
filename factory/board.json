@@ -9,7 +9,11 @@
       "round": 2,
       "parent": null,
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "PASS" },
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
       "decision": "APPROVE",
       "updatedAt": "2026-10-15T05:00:00"
     },
@@ -22,7 +26,11 @@
       "round": 2,
       "parent": null,
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "PASS" },
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T00:00:00"
     },
@@ -35,7 +43,11 @@
       "round": 1,
       "parent": null,
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "PASS" },
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T06:10:00"
     },
@@ -48,7 +60,11 @@
       "round": 0,
       "parent": null,
       "depends": [],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -61,7 +77,11 @@
       "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "pending" },
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -70,13 +90,17 @@
       "feature": "004 t5: ROI core: window, nets, realistic value",
       "branch": "factory/004-roi-overlap-rules-t5",
       "kind": "feature",
-      "stage": "review",
+      "stage": "merged",
       "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "PASS" },
-      "decision": "pending",
-      "updatedAt": "2026-10-18T10:00:00"
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T18:32:20"
     },
     {
       "id": "004-roi-overlap-rules-t2",
@@ -86,8 +110,14 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t1"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t1"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -99,8 +129,14 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t2"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t2"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -112,8 +148,14 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t2"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t2"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -125,8 +167,14 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t5"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t5"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -138,8 +186,15 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t3", "004-roi-overlap-rules-t5"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t3",
+        "004-roi-overlap-rules-t5"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -151,8 +206,15 @@
       "stage": "spec",
       "round": 0,
       "parent": "004-roi-overlap-rules",
-      "depends": ["004-roi-overlap-rules-t4", "004-roi-overlap-rules-t6"],
-      "reviews": { "security": "pending", "code": "pending", "api": "pending" },
+      "depends": [
+        "004-roi-overlap-rules-t4",
+        "004-roi-overlap-rules-t6"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
       "decision": "pending",
       "updatedAt": "2026-10-18T10:00:00"
     },
@@ -165,7 +227,11 @@
       "round": 2,
       "parent": null,
       "depends": [],
-      "reviews": { "security": "PASS", "code": "PASS", "api": "PASS" },
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
       "decision": "APPROVE",
       "updatedAt": "2026-10-18T03:00:00"
     }
