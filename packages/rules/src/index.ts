@@ -13,3 +13,12 @@ export {
   type GenerateResult,
 } from './result.js';
 export { RoiInputSchema, instanceKey, type RoiInput } from './roi/input.js';
+export {
+  BenefitRoiSchema,
+  CardRoiSchema,
+  InstanceRoiSchema,
+  computeCardRoi,
+  type BenefitRoi,
+  type CardRoi,
+  type InstanceRoi,
+} from './roi/compute.js';
