@@ -2,7 +2,7 @@ STATUS: GREEN
 
 # Sub-job 004-t1 — Overlap input contract (build)
 
-Commit: `7f04ac0` (branch `factory/004-roi-overlap-rules-t1`)
+Feature commit: `04a1d28` (branch `factory/004-roi-overlap-rules-t1`)
 
 ## What changed
 
@@ -90,3 +90,10 @@ tests)` passing).
   unrelated untracked folder from the orchestrator; not committed here.
 - At one point my `index.ts` export line disappeared from disk between steps
   (external process); re-added and re-verified before commit.
+- This worktree is shared with other concurrent builder agents: a commit was
+  briefly made on `factory/004-roi-overlap-rules-t5` after an external
+  branch switch; moved to this branch (`git branch -f`), t5 restored to its
+  original tip `d22dcbd`. No other branch content was modified. The t5
+  agent's untracked files (`packages/rules/src/roi/compute.*`,
+  `factory/jobs/004-roi-overlap-rules-t5/`) are present in the worktree but
+  not part of this job's commits.
