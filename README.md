@@ -30,7 +30,7 @@ Web client and API are independent dev processes on independent ports:
 
 ```sh
 pnpm --filter web dev   # http://localhost:3000
-pnpm --filter api dev   # http://localhost:4000 — GET /health returns { "status": "ok" }
+pnpm --filter api dev   # http://localhost:4000 — GET /health returns { "status": "ok", "db": "ok" }
 ```
 
 Or both at once: `pnpm dev` (parallel across the workspace).
@@ -72,13 +72,28 @@ PORT=3100 pnpm --filter web dev
 ### Database
 
 The SQLite file is created on first boot at `DATABASE_PATH` (default
-`apps/api/.data/app.db`, gitignored). Drizzle Kit migrations point at the same
-path:
+`apps/api/.data/app.db`, gitignored). Pending migrations apply automatically
+at API boot, so a fresh `DATABASE_PATH` needs no manual step. Drizzle Kit
+points at the same path:
 
 ```sh
-pnpm --filter api db:generate   # generate SQL migrations from src/db/schema.ts
-pnpm --filter api db:push       # push schema directly to DATABASE_PATH
+pnpm --filter api db:generate   # generate SQL migrations from src/db/schema.ts (committed under apps/api/drizzle/)
+pnpm --filter api db:seed       # migrate to HEAD, then seed the catalog (6 cards, 5 currencies, 54 benefits) — idempotent, safe to re-run
+pnpm --filter api db:push       # push schema directly to DATABASE_PATH (dev only)
 ```
+
+The seed loads `@ccrt/catalog` via upsert by primary key: re-running updates
+changed catalog rows in place and never duplicates. `GET /health` pings the
+db — `200 {"status":"ok","db":"ok"}` when healthy, `503
+{"status":"degraded","db":"error"}` when the db is unreachable; the process
+stays up either way.
+
+Schema notes (feature doc §6): money is stored as integer cents (no floats),
+dates as ISO `YYYY-MM-DD` text, structured values (reset anchors, overlap
+rules, change payloads) as JSON text validated by Zod on read, and
+`user_id` defaults to `'local'` (single-user MVP, no auth). No column
+anywhere can hold a full card number or CVV; `user_card.last_four` is
+display-only.
 
 ## Workspace layout
 
