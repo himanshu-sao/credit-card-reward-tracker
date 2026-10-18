@@ -159,3 +159,126 @@ from real command runs.
 - build.md written in-session per user approval after 10 builder-agent
   API-timeout failures; reviewers should re-verify any criterion they wish —
   all commands above are reproducible from a clean checkout.
+
+## Round 1 rework — api review CHANGES (health probe false-positive)
+
+Fix commit: `9aa69c8` (`fix(api): health probe reads the db file header, not
+WAL-sidecar pages`).
+
+### The finding (round-1/review-api.md item 4)
+
+With a live server handle open, the old readonly re-open probe
+(`new Database(name, {readonly: true})` + `pragma('journal_mode')`) served
+stale pages from the `-wal`/`-shm` sidecars, so a db corrupted *under* a
+running server reported healthy: garbage bytes over the main file → 200
+`{"status":"ok","db":"ok"}` (reviewer: 8/8 trials), chmod-000 → also 200
+(5/5 trials). Only the removed-file case degraded. Criterion 4 requires
+removed/unwritable/corrupt under a running server → 503, never 500,
+process stays up.
+
+### The fix
+
+`apps/api/src/routes/health.ts` — the file probe now opens `DATABASE_PATH`
+with `node:fs` and compares the file's own first 16 bytes against the
+SQLite magic header (`"SQLite format 3\0"`). This is the one read the WAL
+sidecars cannot satisfy. Rationale for the approach:
+
+- A *fresh sqlite connection* (readonly or read-write, with or without a
+  real `select count(*) from sqlite_master`) still reads committed content
+  from the `-wal` sidecar when the shm says it is live — same false
+  positive (I reproduced 200 on a garbage main file this way before
+  choosing the header read).
+- A `wal_checkpoint(TRUNCATE)` + reopen would *repair* the main file from
+  the WAL, mutating the db inside a health check and making the
+  corrupt-under-live case nondeterministic — rejected.
+- The magic-header read cannot false-positive on the healthy WAL steady
+  state: SQLite always writes the 16-byte header to the main file as soon
+  as the db is created (verified below — a WAL-mode db has the header even
+  before any checkpoint), so 200 requires a real, present, readable main
+  file. Corrupt-at-boot is unchanged: `createDb` fails fast with the clear
+  `DbError` naming `DATABASE_PATH` (criterion 9).
+
+Files: `apps/api/src/routes/health.ts` (probe swap only — route shape,
+200/503 bodies, never-500 try/catch unchanged), `apps/api/src/routes/
+health.test.ts` (three pinned degradation cases, each on its own isolated
+db file via a `withHealthApp` helper so destructive mutations can't poison
+a shared instance), `README.md` (health-semantics line now names the exact
+degradation triggers). No other code touched.
+
+### Criterion 4 evidence (fixed cases, real pasted output)
+
+Sandbox note: local TCP binding is blocked (EPERM on 127.0.0.1 and on tsx's
+IPC pipe), so — per the task instructions — the live-server form is
+exercised through the same Fastify pipeline via `app.inject()` in the test
+suite, which is what the round-1 reviewers also used.
+
+`cd apps/api && pnpm exec vitest run src/routes/health.test.ts --reporter=verbose`:
+
+```
+ ✓ src/routes/health.test.ts > GET /health > returns 200 { status: "ok", db: "ok" } against a healthy db 7ms
+ ✓ src/routes/health.test.ts > GET /health > returns a payload the shared schema validates 25ms
+ ✓ src/routes/health.test.ts > GET /health > returns 503 degraded (never 500) when the db file is gone 5ms
+ ✓ src/routes/health.test.ts > GET /health > returns 503 degraded when the main db file is corrupt under a live server 4ms
+ ✓ src/routes/health.test.ts > GET /health > returns 503 degraded when the db file is unreadable under a live server 4ms
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+```
+
+The three degradation tests assert the exact reviewer repro against the
+real route through `app.inject`:
+
+- **corrupt under live server**: `writeFileSync(dbPath, Buffer.alloc(4096,
+  0xff))` over the main file while the boot-time handle and WAL sidecars
+  are open → expects `503 {"status":"degraded","db":"error"}` (the old
+  probe returned 200 here).
+- **unreadable under live server**: `chmodSync(dbPath, 0o000)` (the
+  reviewer's chmod variant) → expects 503 degraded.
+- **removed file**: `rmSync(dbPath)` → expects 503 degraded (and repeat
+  calls keep returning 503 — the process never 500s and stays up; the
+  never-500 property is structural: every db error lands in the catch).
+
+Standalone replication of the reviewer's exact trial sequence against the
+new probe logic (`node -e` from `apps/api`, temp WAL db with live handle
+and both sidecars present):
+
+```
+sidecars present: true true
+trial 1 healthy w/ live handle + WAL sidecars: 200 ok
+trial 2 garbage main file w/ sidecars + live handle: 503 degraded
+trial 3 chmod-000: 503 degraded
+trial 4 removed file: 503 degraded
+```
+
+Healthy-WAL no-false-positive check (why the header read is safe in the
+steady state) — `node -e` from `apps/api` on a fresh WAL-mode db:
+
+```
+after WAL pragma, main size: 4096
+after writes (no checkpoint), main size: 4096
+magic ok: true
+```
+
+The main file carries the header from creation onward, before any
+checkpoint, so a healthy WAL db always probes ok.
+
+### Regression check
+
+`pnpm -r test` (all 5 packages):
+
+```
+packages/shared test:       Tests  3 passed (3)
+apps/web test:             Tests  1 passed (1)
+packages/catalog test:     Tests  47 passed (47)
+apps/api test:             Tests  21 passed (21)   (was 19; +2 degradation pins)
+packages/rules test:       Tests  51 passed (51)
+```
+
+`pnpm -r lint` → zero problems across 5 packages (grep for
+`problems|error` over the output: 0 hits). `pnpm -r format:check` →
+"All matched files use Prettier code style!" ×5.
+
+Round-1 verdicts addressed: security PASS and code PASS accepted as-is
+(the code reviewer's related non-blocking note on the WAL-sidecar probe is
+the same issue fixed here). api CHANGES item 4 is the fix above. No other
+review points were reworked.
