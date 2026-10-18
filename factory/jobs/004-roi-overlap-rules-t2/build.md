@@ -86,13 +86,12 @@ strings via `toEqual` on full objects, and duplicates reject at
 
 ```
 packages/rules test:  Test Files  12 passed (12)
-packages/rules test:        Tests  94 passed (21 → now 94 total; registry.test.ts adds 12)
+packages/rules test:        Tests  94 passed (94)
 apps/api test:  Test Files  3 passed (3)
 apps/api test:        Tests  21 passed (21)
 ```
 
-(94 = 82 pre-existing + 12 new; previously the branch base had 82 in
-rules.)
+94 = 82 pre-existing rules tests + 12 new from `registry.test.ts`.
 
 `pnpm -r lint`: all five workspace projects lint clean (`packages/rules
 lint: Done` etc., no eslint errors).
