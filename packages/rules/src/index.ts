@@ -13,3 +13,4 @@ export {
   type GenerateResult,
 } from './result.js';
 export { RoiInputSchema, instanceKey, type RoiInput } from './roi/input.js';
+export { OverlapInputSchema, type OverlapInput } from './overlap/input.js';
