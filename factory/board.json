@@ -73,17 +73,17 @@
       "feature": "004 t1: Overlap input contract",
       "branch": "factory/004-roi-overlap-rules-t1",
       "kind": "feature",
-      "stage": "review",
+      "stage": "merged",
       "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [],
       "reviews": {
         "security": "PASS",
         "code": "PASS",
-        "api": "pending"
+        "api": "PASS"
       },
-      "decision": "pending",
-      "updatedAt": "2026-10-18T10:00:00"
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T18:35:49"
     },
     {
       "id": "004-roi-overlap-rules-t5",
