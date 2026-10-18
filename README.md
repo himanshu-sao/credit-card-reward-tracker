@@ -85,8 +85,8 @@ pnpm --filter api db:push       # push schema directly to DATABASE_PATH (dev onl
 The seed loads `@ccrt/catalog` via upsert by primary key: re-running updates
 changed catalog rows in place and never duplicates. `GET /health` pings the
 db — `200 {"status":"ok","db":"ok"}` when healthy, `503
-{"status":"degraded","db":"error"}` when the db is unreachable; the process
-stays up either way.
+{"status":"degraded","db":"error"}` when the db file is missing, unreadable,
+or not a valid SQLite file; the process stays up either way.
 
 Schema notes (feature doc §6): money is stored as integer cents (no floats),
 dates as ISO `YYYY-MM-DD` text, structured values (reset anchors, overlap
