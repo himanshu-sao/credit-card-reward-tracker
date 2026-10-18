@@ -50,15 +50,15 @@
       "feature": "Database schema, migrations, and health/db wiring",
       "branch": "factory/005-db-schema",
       "kind": "feature",
-      "stage": "needs-human",
-      "round": 0,
+      "stage": "review",
+      "round": 1,
       "reviews": {
         "security": "pending",
         "code": "pending",
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-17T03:45:00"
+      "updatedAt": "2026-10-17T04:55:00"
     }
   ]
 }
