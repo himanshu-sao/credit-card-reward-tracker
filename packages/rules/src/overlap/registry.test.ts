@@ -1,9 +1,17 @@
 // Static overlap rules (doc §3.9) + registry firing semantics, asserted
 // against the t1 input contract (unknown ids pass; duplicates reject there).
+// The t4 tests cover the time-aware Global Entry rule and the composed
+// `detectOverlaps` entry point (exported from the package root).
 
 import { describe, expect, it } from 'vitest';
 import { OverlapInputSchema } from './input.js';
-import { detectStaticOverlaps, OverlapWarningSchema } from './registry.js';
+import {
+  detectOverlaps,
+  detectStaticOverlaps,
+  OverlapWarningSchema,
+  type OverlapWarning,
+} from './registry.js';
+import { detectOverlaps as detectOverlapsFromRoot } from '../index.js';
 
 const BASE = {
   wallet: ['csp', 'amex-brilliant'],
@@ -138,5 +146,115 @@ describe('detectStaticOverlaps — registry firing semantics', () => {
     expect(() =>
       detectStaticOverlaps({ ...BASE, wallet: ['amex-platinum', 'amex-platinum'] }),
     ).toThrow(/duplicate card id amex-platinum/);
+  });
+});
+
+const SIX_CARDS = [
+  'chase-sapphire-preferred',
+  'amex-platinum',
+  'hilton-amex-aspire',
+  'hilton-amex-surpass',
+  'bilt-palladium',
+  'marriott-bonvoy-brilliant',
+] as const;
+
+const GE_CARDS = ['chase-sapphire-preferred', 'marriott-bonvoy-brilliant'] as const;
+
+const geRule = (warnings: OverlapWarning[]) =>
+  warnings.find((w) => w.rule_id === 'global-entry-overlap');
+
+describe('detectOverlaps — time-aware Global Entry rule (t4)', () => {
+  it('six-card wallet, date = asOf − 1y → static rules + GE on both GE benefit ids', () => {
+    const warnings = detectOverlaps(
+      valid({ wallet: [...SIX_CARDS], last_ge_application_date: '2025-06-01' }),
+    );
+    // 3 static rules now; t3's Priority Pass + Hilton Diamond land here too
+    // (six total with them, parent AC5).
+    expect(warnings.map((w) => w.rule_id)).toEqual([
+      'clear-plus-reimbursement',
+      'airline-credit-rules-differ',
+      'hotel-credit-no-stack',
+      'global-entry-overlap',
+    ]);
+    expect(geRule(warnings)?.benefit_ids).toEqual(['csp-global-entry', 'brilliant-global-entry']);
+  });
+
+  it('boundary: date = asOf − 4y → coverage expires exactly at asOf → no GE warning', () => {
+    const warnings = detectOverlaps(
+      valid({ wallet: [...GE_CARDS], last_ge_application_date: '2022-06-01' }),
+    );
+    expect(geRule(warnings)).toBeUndefined();
+  });
+
+  it('date = asOf − 4y − 1d → coverage long expired → no GE warning', () => {
+    const warnings = detectOverlaps(
+      valid({ wallet: [...GE_CARDS], last_ge_application_date: '2022-05-31' }),
+    );
+    expect(geRule(warnings)).toBeUndefined();
+  });
+
+  it('date = asOf − 3y → coverage still active → GE warning fires', () => {
+    const warnings = detectOverlaps(
+      valid({ wallet: [...GE_CARDS], last_ge_application_date: '2023-06-01' }),
+    );
+    expect(geRule(warnings)?.benefit_ids).toEqual(['csp-global-entry', 'brilliant-global-entry']);
+  });
+
+  it('missing date with GE cards held → no GE warning; static rules fire exactly as in t2', () => {
+    const wallet = ['amex-platinum', 'hilton-amex-aspire', 'chase-sapphire-preferred'];
+    const withoutDate = detectOverlaps(valid({ wallet, last_ge_application_date: undefined }));
+    expect(geRule(withoutDate)).toBeUndefined();
+    expect(withoutDate).toEqual(
+      detectStaticOverlaps(valid({ wallet, last_ge_application_date: undefined })),
+    );
+    expect(withoutDate.map((w) => w.rule_id)).toEqual([
+      'clear-plus-reimbursement',
+      'airline-credit-rules-differ',
+      'hotel-credit-no-stack',
+    ]);
+  });
+
+  it('GE benefit ids follow the held cards (CSP alone → csp-global-entry)', () => {
+    const warnings = detectOverlaps(
+      valid({
+        wallet: ['chase-sapphire-preferred', 'amex-platinum'],
+        last_ge_application_date: '2025-06-01',
+      }),
+    );
+    expect(geRule(warnings)?.benefit_ids).toEqual(['csp-global-entry']);
+  });
+
+  it('no GE card held → no GE warning, date present or absent', () => {
+    const present = detectOverlaps(
+      valid({
+        wallet: ['amex-platinum', 'hilton-amex-aspire'],
+        last_ge_application_date: '2025-06-01',
+      }),
+    );
+    const absent = detectOverlaps(
+      valid({
+        wallet: ['amex-platinum', 'hilton-amex-aspire'],
+        last_ge_application_date: undefined,
+      }),
+    );
+    expect(geRule(present)).toBeUndefined();
+    expect(geRule(absent)).toBeUndefined();
+  });
+
+  it('future last_ge_application_date → no GE warning (not a completed application)', () => {
+    const warnings = detectOverlaps(
+      valid({ wallet: [...GE_CARDS], last_ge_application_date: '2027-06-01' }),
+    );
+    expect(geRule(warnings)).toBeUndefined();
+  });
+
+  it('is the same function exported from the package root', () => {
+    expect(detectOverlapsFromRoot).toBe(detectOverlaps);
+  });
+
+  it('malformed dates reject in OverlapInputSchema before reaching the rule', () => {
+    expect(() =>
+      detectOverlaps({ ...BASE, wallet: [...GE_CARDS], last_ge_application_date: '2026-13-45' }),
+    ).toThrow(/ISO date/);
   });
 });
