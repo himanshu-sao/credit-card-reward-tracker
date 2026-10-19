@@ -15,7 +15,7 @@ export const OverlapInputSchema = z
     wallet: z.array(z.string().min(1)),
     /** Window anchor for overlap detection. */
     asOf: ISODate,
-    /** Doc §3.9 GE rule anchor; when absent the rule falls back to `asOf`. */
+    /** Doc §3.9 GE rule anchor; when absent the GE rule never fires. */
     last_ge_application_date: ISODate.optional(),
   })
   .superRefine((input, ctx) => {
