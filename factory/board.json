@@ -183,7 +183,7 @@
       "feature": "004 t7: ROI redundant-benefit marking",
       "branch": "factory/004-roi-overlap-rules-t7",
       "kind": "feature",
-      "stage": "spec",
+      "stage": "build",
       "round": 0,
       "parent": "004-roi-overlap-rules",
       "depends": [
@@ -196,7 +196,7 @@
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-18T10:00:00"
+      "updatedAt": "2026-10-18T20:32:25"
     },
     {
       "id": "004-roi-overlap-rules-t8",
