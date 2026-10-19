@@ -85,6 +85,7 @@ describe('AC3 — per-benefit and per-instance detail rows', () => {
         benefit_id: 'csp-hotel-credit',
         face_value_available_cents: 10000,
         value_used_cents: 4000,
+        redundant: false,
       },
     ]);
   });
@@ -103,6 +104,7 @@ describe('AC3 — per-benefit and per-instance detail rows', () => {
         benefit_id: 'csp-hotel-credit',
         face_value_available_cents: 20000,
         value_used_cents: 3000,
+        redundant: false,
       },
     ]);
     expect(result.instances).toHaveLength(2);
@@ -152,5 +154,123 @@ describe('AC5 — empty input, helpers-only arithmetic, contract intact', () => 
     const result = roi({ asOf: '2026-06-01' });
     expect(result.window_start).toBe('2025-06-01');
     expect(result.window_end).toBe('2026-06-01');
+  });
+});
+
+// t7: overlap warnings annotate the breakdown (spec 004-t7 AC1–AC4). Diamond
+// case: a no_periods status benefit generates no instances, so its flagged row
+// is emitted zero-valued; warnings are data in and change no math.
+const SURPASS = {
+  card: { id: 'hilton-amex-surpass', annual_fee_cents: 15000, currency_id: 'hilton-points' },
+  benefits: {
+    'surpass-gold-status': {
+      id: 'surpass-gold-status',
+      amount_cents: null,
+      status: 'active',
+      effective_to: null,
+    },
+    'surpass-hotel-credit': {
+      id: 'surpass-hotel-credit',
+      amount_cents: 10000,
+      status: 'active',
+      effective_to: null,
+    },
+  },
+  instances: [
+    {
+      benefit_id: 'surpass-hotel-credit',
+      period_start: '2026-01-01',
+      period_end: '2026-12-31',
+      amount_available_cents: 10000,
+      prorated: false,
+      status: 'active',
+    },
+  ],
+  usage: {} as Record<string, number>,
+  valuations: {} as Record<string, number>,
+  cents_per_point: {} as Record<string, number>,
+  points_amounts: {} as Record<string, number>,
+  asOf: '2026-06-01',
+} as const;
+
+const DIAMOND_WARNING = {
+  rule_id: 'hilton-diamond-redundant',
+  message: "Aspire's Hilton Diamond status makes Surpass's automatic Gold status redundant.",
+  benefit_ids: ['aspire-diamond-status', 'surpass-gold-status'],
+};
+
+const surpassRoi = (overlap_warnings: unknown) =>
+  CardRoiSchema.parse(computeCardRoi(RoiInputSchema.parse({ ...SURPASS, overlap_warnings })));
+
+describe('AC1 — Diamond warning flags the no-instances status benefit row', () => {
+  it('surpass-gold-status emits a zero-valued redundant row; others false', () => {
+    const result = surpassRoi([DIAMOND_WARNING]);
+    const flagged = result.benefits.filter((b) => b.redundant);
+    expect(flagged).toEqual([
+      {
+        benefit_id: 'surpass-gold-status',
+        face_value_available_cents: 0,
+        value_used_cents: 0,
+        redundant: true,
+      },
+    ]);
+    expect(result.benefits.find((b) => b.benefit_id === 'surpass-hotel-credit')).toEqual({
+      benefit_id: 'surpass-hotel-credit',
+      face_value_available_cents: 10000,
+      value_used_cents: 0,
+      redundant: false,
+    });
+  });
+});
+
+describe('AC2 — annotation only: totals identical with and without warnings', () => {
+  it('field absent and [] parse; all four card totals byte-identical', () => {
+    const absent = CardRoiSchema.parse(computeCardRoi(RoiInputSchema.parse({ ...SURPASS })));
+    const empty = surpassRoi([]);
+    const warned = surpassRoi([DIAMOND_WARNING]);
+    for (const key of [
+      'face_value_available_cents',
+      'value_used_cents',
+      'net_used_cents',
+      'net_available_cents',
+    ] as const) {
+      expect(warned[key]).toBe(absent[key]);
+      expect(empty[key]).toBe(absent[key]);
+    }
+    expect(absent.benefits.every((b) => !b.redundant)).toBe(true);
+  });
+});
+
+describe('AC3 — warning ids unknown to the card are ignored', () => {
+  it('Diamond warning on a card lacking surpass-gold-status: no crash, no extra row', () => {
+    // Surpass input minus the status benefit, as when computing Aspire's ROI.
+    const withoutStatus = {
+      ...SURPASS,
+      benefits: { 'surpass-hotel-credit': SURPASS.benefits['surpass-hotel-credit'] },
+    };
+    const roiOf = (over: Record<string, unknown>) =>
+      CardRoiSchema.parse(computeCardRoi(RoiInputSchema.parse({ ...withoutStatus, ...over })));
+    const baseline = roiOf({});
+    expect(roiOf({ overlap_warnings: [DIAMOND_WARNING] }).benefits).toEqual(baseline.benefits);
+    expect(baseline.benefits).toHaveLength(1);
+  });
+});
+
+describe('AC4 — duplicate flags on one benefit collapse to a single row', () => {
+  it('two warnings naming surpass-gold-status → one flagged row', () => {
+    const result = surpassRoi([
+      DIAMOND_WARNING,
+      { ...DIAMOND_WARNING, rule_id: 'another-rule', benefit_ids: ['surpass-gold-status'] },
+    ]);
+    const flagged = result.benefits.filter((b) => b.benefit_id === 'surpass-gold-status');
+    expect(flagged).toEqual([
+      {
+        benefit_id: 'surpass-gold-status',
+        face_value_available_cents: 0,
+        value_used_cents: 0,
+        redundant: true,
+      },
+    ]);
+    expect(result.benefits).toHaveLength(2);
   });
 });

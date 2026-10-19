@@ -13,6 +13,8 @@ export const BenefitRoiSchema = z.object({
   face_value_available_cents: z.number().int().nonnegative(),
   /** Realized value inside the window (integer cents). */
   value_used_cents: z.number().int().nonnegative(),
+  /** True when an overlap warning flagged this benefit (doc §3.9). Annotation only. */
+  redundant: z.boolean(),
 });
 export type BenefitRoi = z.infer<typeof BenefitRoiSchema>;
 
@@ -66,6 +68,14 @@ export function computeCardRoi(input: RoiInput): CardRoi {
   const benefits = new Map<string, { face: number; used: number }>();
   const instances: InstanceRoi[] = [];
 
+  // Union of warned ids that exist on this card; unknown ids are dropped.
+  const redundant = new Set<string>();
+  for (const warning of input.overlap_warnings) {
+    for (const id of warning.benefit_ids) {
+      if (id in input.benefits) redundant.add(id);
+    }
+  }
+
   for (const inst of input.instances) {
     const key = instanceKey(inst.benefit_id, inst.period_start);
     const inWindow =
@@ -100,8 +110,22 @@ export function computeCardRoi(input: RoiInput): CardRoi {
       benefit_id: id,
       face_value_available_cents: totals.face,
       value_used_cents: totals.used,
+      redundant: redundant.has(id),
     };
   });
+
+  // A flagged benefit with no in-window instances (e.g. a no_periods status
+  // benefit like surpass-gold-status) still gets a zero-valued row to annotate.
+  for (const id of redundant) {
+    if (!benefits.has(id)) {
+      benefitRows.push({
+        benefit_id: id,
+        face_value_available_cents: 0,
+        value_used_cents: 0,
+        redundant: true,
+      });
+    }
+  }
 
   const fee = input.card.annual_fee_cents;
   return {
