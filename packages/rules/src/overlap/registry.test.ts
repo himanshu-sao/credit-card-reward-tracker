@@ -248,12 +248,14 @@ describe('detectOverlaps — time-aware Global Entry rule (t4)', () => {
     const warnings = detectOverlaps(
       valid({ wallet: [...SIX_CARDS], last_ge_application_date: '2025-06-01' }),
     );
-    // 3 static rules now; t3's Priority Pass + Hilton Diamond land here too
-    // (six total with them, parent AC5).
+    // t3's Priority Pass + Hilton Diamond merged: all five static rules + GE
+    // = six warnings (parent AC5).
     expect(warnings.map((w) => w.rule_id)).toEqual([
       'clear-plus-reimbursement',
       'airline-credit-rules-differ',
       'hotel-credit-no-stack',
+      'priority-pass-best-path',
+      'hilton-diamond-redundant',
       'global-entry-overlap',
     ]);
     expect(geRule(warnings)?.benefit_ids).toEqual(['csp-global-entry', 'brilliant-global-entry']);
