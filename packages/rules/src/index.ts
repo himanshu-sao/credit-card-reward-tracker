@@ -15,6 +15,11 @@ export {
 export { RoiInputSchema, instanceKey, type RoiInput } from './roi/input.js';
 export { OverlapInputSchema, type OverlapInput } from './overlap/input.js';
 export {
+  OverlapWarningSchema,
+  detectStaticOverlaps,
+  type OverlapWarning,
+} from './overlap/registry.js';
+export {
   BenefitRoiSchema,
   CardRoiSchema,
   InstanceRoiSchema,
