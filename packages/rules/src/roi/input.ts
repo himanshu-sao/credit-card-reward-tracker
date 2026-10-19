@@ -9,6 +9,7 @@ import { z } from 'zod';
 import { StatusSchema } from '@ccrt/catalog';
 import { isValidISO } from '../dates.js';
 import { BenefitInstanceSchema, type BenefitInstance } from '../result.js';
+import { OverlapWarningSchema } from '../overlap/registry.js';
 
 const ISODate = z.string().refine(isValidISO, { message: 'must be a valid ISO date (YYYY-MM-DD)' });
 
@@ -49,6 +50,12 @@ export const RoiInputSchema = z
     points_amounts: z.record(z.string(), z.number().int().positive()),
     /** Window anchor for the trailing-12-month ROI window. */
     asOf: ISODate,
+    /**
+     * Overlap warnings from `detectOverlaps` (doc §3.9). Annotation only — ids
+     * not in `benefits` are dropped at runtime, never zod-rejected. Optional
+     * with default so every pre-t7 call site parses unchanged.
+     */
+    overlap_warnings: z.array(OverlapWarningSchema).default([]),
   })
   .superRefine((input, ctx) => {
     const fail = (path: string, message: string) =>
