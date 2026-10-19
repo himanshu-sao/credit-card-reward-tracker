@@ -1,8 +1,8 @@
 // Overlap rules (doc §3.9) and their registry. A static rule fires iff ≥ 2 of
-// its catalog cards are held; unknown wallet ids are ignored (the t1 schema
+// its catalog cards are held (`all` mode: every card held — used by the
+// directional Diamond rule); unknown wallet ids are ignored (the t1 schema
 // passes them by design — this registry owns firing). `detectOverlaps` is the
-// composed entry point: static rules plus the time-aware Global Entry rule.
-// Priority Pass / Hilton Diamond (t3) slot in here when built.
+// composed entry point: all static rules plus the time-aware Global Entry rule.
 
 import { z } from 'zod';
 import { addYears, compareISO } from '../dates.js';
@@ -20,6 +20,8 @@ interface StaticRule {
   rule_id: string;
   message: string;
   cards: { card_id: string; benefit_id: string }[];
+  // Absent: fires iff ≥ 2 of `cards` are held. `all`: iff every one is held.
+  firing?: 'all';
 }
 
 const STATIC_RULES: StaticRule[] = [
@@ -50,6 +52,25 @@ const STATIC_RULES: StaticRule[] = [
       { card_id: 'bilt-palladium', benefit_id: 'bilt-hotel-credit' },
     ],
   },
+  {
+    rule_id: 'priority-pass-best-path',
+    message:
+      'Multiple Priority Pass memberships held — pick one card for lounge access; the others duplicate it.',
+    cards: [
+      { card_id: 'hilton-amex-aspire', benefit_id: 'aspire-lounge-access' },
+      { card_id: 'bilt-palladium', benefit_id: 'bilt-priority-pass' },
+      { card_id: 'marriott-bonvoy-brilliant', benefit_id: 'brilliant-priority-pass' },
+    ],
+  },
+  {
+    rule_id: 'hilton-diamond-redundant',
+    message: "Aspire's Hilton Diamond status makes Surpass's automatic Gold status redundant.",
+    firing: 'all',
+    cards: [
+      { card_id: 'hilton-amex-aspire', benefit_id: 'aspire-diamond-status' },
+      { card_id: 'hilton-amex-surpass', benefit_id: 'surpass-gold-status' },
+    ],
+  },
 ];
 
 export function detectStaticOverlaps(input: OverlapInput): OverlapWarning[] {
@@ -57,7 +78,8 @@ export function detectStaticOverlaps(input: OverlapInput): OverlapWarning[] {
   const held = new Set(wallet);
   return STATIC_RULES.flatMap((rule) => {
     const benefitIds = rule.cards.filter((c) => held.has(c.card_id)).map((c) => c.benefit_id);
-    return benefitIds.length >= 2
+    const threshold = rule.firing === 'all' ? rule.cards.length : 2;
+    return benefitIds.length >= threshold
       ? [{ rule_id: rule.rule_id, message: rule.message, benefit_ids: benefitIds }]
       : [];
   });
