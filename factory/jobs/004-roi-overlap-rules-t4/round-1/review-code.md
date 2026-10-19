@@ -1,0 +1,7 @@
+VERDICT: PASS
+
+- Boundary semantics verified independently (reran the rules suite: 104/104 pass, plus my own throwaway checks for asOf−4y / −4y−1d / −3y / future / missing / no-GE-card / leap-day 2024-02-29+4y, then removed the scratch test): fires iff GE card held AND date present AND `date <= asOf` AND `addYears(date,4) > asOf` strictly — registry.ts:90-94 matches the spec exactly; no `Date` objects in the diff.
+- GE coverage matches the catalog seeds: `csp-global-entry` and `brilliant-global-entry` only; Amex Platinum has no Global Entry row (grep across `packages/catalog/src`), consistent with the feature doc's "possibly Platinum" open question.
+- `detectOverlaps` composition is pure, re-parses via `OverlapInputSchema` (mirroring the existing `detectStaticOverlaps` pattern), stable order (static rules then GE), exported from the package root and asserted same-function via `toBe`. `input.ts` change is comment-only and correct.
+- Lint (eslint exit 0) and Prettier clean on all four touched files; no bloat — 45 lines added to registry.ts with one GE table, one rule fn, one composer; test file mirrors the t2 BASE/valid() style with no existing test modified.
+- AC1's six-warning count is honestly documented in build.md as 4-until-t3-merges (parallel-branch note, recorded in the test comment) — spec-compliant on this branch; no user-facing docs change needed (no env vars, README already covers overlap detection generically).
