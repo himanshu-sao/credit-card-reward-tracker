@@ -1,5 +1,6 @@
 // Static overlap rules (doc §3.9) + registry firing semantics, asserted
 // against the t1 input contract (unknown ids pass; duplicates reject there).
+// The Priority Pass and Hilton Diamond rules (t3) share the registry.
 
 import { describe, expect, it } from 'vitest';
 import { OverlapInputSchema } from './input.js';
@@ -83,6 +84,82 @@ describe('detectStaticOverlaps — the three static rules', () => {
   });
 });
 
+describe('detectStaticOverlaps — Priority Pass best path (t3)', () => {
+  it('fires listing exactly the two held benefit ids for any 2 of its 3 cards', () => {
+    const cases: [string[], string[]][] = [
+      [
+        ['hilton-amex-aspire', 'bilt-palladium'],
+        ['aspire-lounge-access', 'bilt-priority-pass'],
+      ],
+      [
+        ['hilton-amex-aspire', 'marriott-bonvoy-brilliant'],
+        ['aspire-lounge-access', 'brilliant-priority-pass'],
+      ],
+      [
+        ['bilt-palladium', 'marriott-bonvoy-brilliant'],
+        ['bilt-priority-pass', 'brilliant-priority-pass'],
+      ],
+    ];
+    for (const [wallet, benefitIds] of cases) {
+      const warnings = detectStaticOverlaps(valid({ wallet, last_ge_application_date: undefined }));
+      expect(warnings).toEqual([
+        {
+          rule_id: 'priority-pass-best-path',
+          message:
+            'Multiple Priority Pass memberships held — pick one card for lounge access; the others duplicate it.',
+          benefit_ids: benefitIds,
+        },
+      ]);
+    }
+  });
+
+  it('lists all three benefit ids when all three Priority Pass cards are held', () => {
+    const warnings = detectStaticOverlaps(
+      valid({
+        wallet: ['hilton-amex-aspire', 'bilt-palladium', 'marriott-bonvoy-brilliant'],
+        last_ge_application_date: undefined,
+      }),
+    );
+    expect(warnings).toEqual([
+      {
+        rule_id: 'priority-pass-best-path',
+        message:
+          'Multiple Priority Pass memberships held — pick one card for lounge access; the others duplicate it.',
+        benefit_ids: ['aspire-lounge-access', 'bilt-priority-pass', 'brilliant-priority-pass'],
+      },
+    ]);
+  });
+
+  it('does not fire for a single Priority Pass card', () => {
+    expect(ruleIds(['hilton-amex-aspire'])).toEqual([]);
+    expect(ruleIds(['bilt-palladium'])).toEqual([]);
+    expect(ruleIds(['marriott-bonvoy-brilliant'])).toEqual([]);
+  });
+});
+
+describe('detectStaticOverlaps — Hilton Diamond redundancy (t3)', () => {
+  it('fires for [hilton-amex-aspire, hilton-amex-surpass] naming the redundant Gold status', () => {
+    const warnings = detectStaticOverlaps(
+      valid({
+        wallet: ['hilton-amex-aspire', 'hilton-amex-surpass'],
+        last_ge_application_date: undefined,
+      }),
+    );
+    expect(warnings).toEqual([
+      {
+        rule_id: 'hilton-diamond-redundant',
+        message: "Aspire's Hilton Diamond status makes Surpass's automatic Gold status redundant.",
+        benefit_ids: ['aspire-diamond-status', 'surpass-gold-status'],
+      },
+    ]);
+  });
+
+  it('is directional — neither card alone fires it', () => {
+    expect(ruleIds(['hilton-amex-aspire'])).toEqual([]);
+    expect(ruleIds(['hilton-amex-surpass'])).toEqual([]);
+  });
+});
+
 describe('detectStaticOverlaps — registry firing semantics', () => {
   it('returns [] for an empty wallet without throwing', () => {
     expect(ruleIds([])).toEqual([]);
@@ -101,7 +178,7 @@ describe('detectStaticOverlaps — registry firing semantics', () => {
     expect(ruleIds(['csp'])).toEqual([]);
   });
 
-  it('emits warnings that all validate through OverlapWarningSchema', () => {
+  it('full six-card wallet yields exactly 5 warnings, all valid through OverlapWarningSchema', () => {
     const warnings = detectStaticOverlaps(
       valid({
         wallet: [
@@ -119,7 +196,10 @@ describe('detectStaticOverlaps — registry firing semantics', () => {
       'clear-plus-reimbursement',
       'airline-credit-rules-differ',
       'hotel-credit-no-stack',
+      'priority-pass-best-path',
+      'hilton-diamond-redundant',
     ]);
+    expect(warnings).toHaveLength(5);
     for (const w of warnings) expect(() => OverlapWarningSchema.parse(w)).not.toThrow();
   });
 
