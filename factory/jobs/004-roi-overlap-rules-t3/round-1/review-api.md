@@ -1,0 +1,6 @@
+VERDICT: PASS
+- No HTTP surface (rules library only); ran `pnpm --filter @ccrt/rules test`: 12 files / 99 tests green, registry suite now 17 (was 12) — all 5 new t3 tests pass.
+- Independent spot-check matrix (scratch vitest file, deleted after): Aspire+Surpass → `hilton-diamond-redundant` with both `aspire-diamond-status` and `surpass-gold-status`, schema-valid; Aspire-only and Surpass-only → no diamond warning (directional `firing: 'all'` works); all three PP pairs → `priority-pass-best-path` listing exactly the held benefit ids; each PP card alone → none; all-3 → all three ids.
+- Full six-card wallet → exactly 5 warnings in expected order (`clear-plus-reimbursement`, `airline-credit-rules-differ`, `hotel-credit-no-stack`, `priority-pass-best-path`, `hilton-diamond-redundant`), every one parses via `OverlapWarningSchema`; duplicates reject via `OverlapInputSchema`, unknown ids ignored, input not mutated.
+- t2 regression: pair-ordering and kill tests re-verified exactly; benefit/card ids confirmed against real catalog seeds (`benefits-aspire.ts:104,146`, `benefits-bilt.ts:48`, `benefits-brilliant.ts:106`, `benefits-surpass.ts:62`).
+- Full monorepo `pnpm -r test` green (171 total: 3+1+47+99+21); `pnpm -r lint` and `format:check` clean (my spot-check file removed first); diff confined to the two `packages/rules/src/overlap/` files plus build.md.
