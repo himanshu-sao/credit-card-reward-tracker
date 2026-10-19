@@ -107,7 +107,7 @@
       "feature": "004 t2: Overlap rule registry + 3 static rules",
       "branch": "factory/004-roi-overlap-rules-t2",
       "kind": "feature",
-      "stage": "review",
+      "stage": "merged",
       "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [
@@ -118,8 +118,8 @@
         "code": "PASS",
         "api": "PASS"
       },
-      "decision": "pending",
-      "updatedAt": "2026-10-18T19:19:58"
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T19:25:16"
     },
     {
       "id": "004-roi-overlap-rules-t3",
