@@ -126,8 +126,8 @@
       "feature": "004 t3: Priority Pass + Hilton Diamond rules",
       "branch": "factory/004-roi-overlap-rules-t3",
       "kind": "feature",
-      "stage": "build",
-      "round": 0,
+      "stage": "review",
+      "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [
         "004-roi-overlap-rules-t2"
@@ -138,7 +138,7 @@
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-18T19:30:47"
+      "updatedAt": "2026-10-18T19:37:11"
     },
     {
       "id": "004-roi-overlap-rules-t4",
