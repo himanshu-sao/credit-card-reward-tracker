@@ -351,3 +351,96 @@ describe('AC4 — portfolio fee total across all six catalog cards = 283500', ()
     expect(total).toBe(283500);
   });
 });
+
+// --- 004-t6 round 1: security — prototype-chain lookup regression ---
+
+/**
+ * Build a record with a genuinely own (not inherited) `__proto__` key —
+ * `Object.defineProperty` shadows the prototype accessor, while a literal
+ * `{ __proto__: ... }` would set the prototype instead.
+ */
+function recordWithOwnProtoKey(value: number): Record<string, number> {
+  const rec: Record<string, number> = {};
+  Object.defineProperty(rec, '__proto__', { value, enumerable: true, writable: true });
+  return rec;
+}
+
+describe('round-1 security — prototype-chain keys fall back, never NaN', () => {
+  it('currency_id "__proto__" with no matching override → catalog fallback missing → 0, not NaN', () => {
+    const result = roi({
+      ...POINTS_BASE,
+      card: { id: 'x', annual_fee_cents: 0, currency_id: '__proto__' },
+      points_amounts: { 'aspire-free-night-reward': 85000 },
+      cents_per_point: {},
+    });
+    // No override and no catalog row for "__proto__" → defaultCents 0,
+    // never Object.prototype (which would make this NaN).
+    expect(result.face_value_available_cents).toBe(0);
+    expect(result.net_available_cents).toBe(0); // 0 face − 0 fee
+  });
+
+  it('currency_id "constructor" behaves the same — fallback, not Function → NaN', () => {
+    const result = roi({
+      ...POINTS_BASE,
+      card: { id: 'x', annual_fee_cents: 0, currency_id: 'constructor' },
+      points_amounts: { 'aspire-free-night-reward': 85000 },
+      cents_per_point: {},
+    });
+    expect(result.face_value_available_cents).toBe(0);
+  });
+
+  it('an own inherited-name override that survives parse is still honored (constructor: 0.5)', () => {
+    const result = roi({
+      ...POINTS_BASE,
+      card: { id: 'x', annual_fee_cents: 0, currency_id: 'constructor' },
+      points_amounts: { 'aspire-free-night-reward': 1000 },
+      cents_per_point: { constructor: 0.5 },
+    });
+    expect(result.face_value_available_cents).toBe(500);
+  });
+
+  it('an own __proto__ override cannot survive RoiInputSchema.parse (setter drops it) → fallback 0', () => {
+    const parsed = RoiInputSchema.parse({
+      ...POINTS_BASE,
+      card: { id: 'x', annual_fee_cents: 0, currency_id: '__proto__' },
+      points_amounts: { 'aspire-free-night-reward': 1000 },
+      cents_per_point: recordWithOwnProtoKey(0.5),
+    });
+    expect(Object.hasOwn(parsed.cents_per_point, '__proto__')).toBe(false);
+    const result = CardRoiSchema.parse(computeCardRoi(parsed));
+    expect(result.face_value_available_cents).toBe(0);
+  });
+
+  it('valuations "__proto__" with no own entry → fraction 1, not Object.prototype → NaN', () => {
+    const result = roi({ valuations: { ['__proto__' as string]: 0.55 } as Record<string, number> });
+    // A literal computed __proto__ key lands on the prototype (setter), so the
+    // record has no own entry: fraction must fall back to 1 → full face value.
+    expect(result.face_value_available_cents).toBe(10000);
+  });
+
+  it('benefit_id "constructor" in points_amounts → no own entry → zero face, not NaN', () => {
+    const result = roi({
+      ...POINTS_BASE,
+      benefits: {
+        constructor: {
+          id: 'constructor',
+          amount_cents: null,
+          status: 'active',
+          effective_to: null,
+        },
+      },
+      instances: [
+        {
+          benefit_id: 'constructor',
+          period_start: '2026-02-01',
+          period_end: '2027-01-31',
+          amount_available_cents: null,
+          prorated: false,
+          status: 'active',
+        },
+      ],
+      points_amounts: {},
+    });
+    expect(result.face_value_available_cents).toBe(0); // toBe fails on NaN by itself
+  });
+});

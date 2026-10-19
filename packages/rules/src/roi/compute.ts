@@ -50,9 +50,18 @@ export const CardRoiSchema = z.object({
 });
 export type CardRoi = z.infer<typeof CardRoiSchema>;
 
+/**
+ * Own-property lookup on a string-keyed input record: an id like `__proto__`
+ * or `constructor` is schema-valid, so bare bracket access would resolve
+ * through the prototype chain and defeat the `??` fallbacks — never a number.
+ */
+function ownEntry<V>(record: Record<string, V>, key: string): V | undefined {
+  return Object.hasOwn(record, key) ? record[key] : undefined;
+}
+
 /** Realistic value scaling: valuation fraction (default 1) times face value. */
 function scaleValue(input: RoiInput, benefitId: string, amountCents: number): number {
-  const fraction = input.valuations[benefitId] ?? 1;
+  const fraction = ownEntry(input.valuations, benefitId) ?? 1;
   return Math.round(amountCents * fraction);
 }
 
@@ -68,11 +77,11 @@ function faceValueFor(
   amountAvailableCents: number | null,
 ): number {
   if (amountAvailableCents != null) return amountAvailableCents;
-  const points = input.points_amounts[benefitId];
+  const points = ownEntry(input.points_amounts, benefitId);
   if (points == null) return 0;
   const defaultCents =
     currencies.find((c) => c.id === input.card.currency_id)?.default_cents_per_point ?? 0;
-  const centsPerPoint = input.cents_per_point[input.card.currency_id] ?? defaultCents;
+  const centsPerPoint = ownEntry(input.cents_per_point, input.card.currency_id) ?? defaultCents;
   return Math.round(points * centsPerPoint);
 }
 
