@@ -133,20 +133,20 @@
         "004-roi-overlap-rules-t2"
       ],
       "reviews": {
-        "security": "pending",
-        "code": "pending",
+        "security": "PASS",
+        "code": "PASS",
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-18T19:37:11"
+      "updatedAt": "2026-10-18T19:42:38"
     },
     {
       "id": "004-roi-overlap-rules-t4",
       "feature": "004 t4: Time-aware Global Entry rule + detectOverlaps export",
       "branch": "factory/004-roi-overlap-rules-t4",
       "kind": "feature",
-      "stage": "build",
-      "round": 0,
+      "stage": "review",
+      "round": 1,
       "parent": "004-roi-overlap-rules",
       "depends": [
         "004-roi-overlap-rules-t2"
@@ -157,7 +157,7 @@
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-18T19:30:47"
+      "updatedAt": "2026-10-18T19:51:50"
     },
     {
       "id": "004-roi-overlap-rules-t6",
@@ -171,12 +171,12 @@
         "004-roi-overlap-rules-t5"
       ],
       "reviews": {
-        "security": "pending",
-        "code": "pending",
+        "security": "CHANGES",
+        "code": "PASS",
         "api": "pending"
       },
       "decision": "pending",
-      "updatedAt": "2026-10-18T19:31:35"
+      "updatedAt": "2026-10-18T19:48:03"
     },
     {
       "id": "004-roi-overlap-rules-t7",
