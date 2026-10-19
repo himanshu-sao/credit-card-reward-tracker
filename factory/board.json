@@ -164,7 +164,7 @@
       "feature": "004 t6: ROI points amounts + retired exclusion",
       "branch": "factory/004-roi-overlap-rules-t6",
       "kind": "feature",
-      "stage": "review",
+      "stage": "merged",
       "round": 2,
       "parent": "004-roi-overlap-rules",
       "depends": [
@@ -175,8 +175,8 @@
         "code": "PASS",
         "api": "PASS"
       },
-      "decision": "pending",
-      "updatedAt": "2026-10-18T22:05:16"
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T22:22:35"
     },
     {
       "id": "004-roi-overlap-rules-t7",
