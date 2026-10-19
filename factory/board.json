@@ -7,6 +7,8 @@
       "kind": "feature",
       "stage": "merged",
       "round": 2,
+      "parent": null,
+      "depends": [],
       "reviews": {
         "security": "PASS",
         "code": "PASS",
@@ -22,6 +24,8 @@
       "kind": "feature",
       "stage": "merged",
       "round": 2,
+      "parent": null,
+      "depends": [],
       "reviews": {
         "security": "PASS",
         "code": "PASS",
@@ -29,6 +33,207 @@
       },
       "decision": "APPROVE",
       "updatedAt": "2026-10-16T00:00:00"
+    },
+    {
+      "id": "003-reset-engine",
+      "feature": "Reset engine: period generation for every reset anchor",
+      "branch": "factory/003-reset-engine",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": null,
+      "depends": [],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-16T06:10:00"
+    },
+    {
+      "id": "004-roi-overlap-rules",
+      "feature": "ROI math and overlap detection rules",
+      "branch": "factory/004-roi-overlap-rules",
+      "kind": "feature",
+      "stage": "decomposed",
+      "round": 0,
+      "parent": null,
+      "depends": [],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-18T10:00:00"
+    },
+    {
+      "id": "004-roi-overlap-rules-t1",
+      "feature": "004 t1: Overlap input contract",
+      "branch": "factory/004-roi-overlap-rules-t1",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T18:35:49"
+    },
+    {
+      "id": "004-roi-overlap-rules-t5",
+      "feature": "004 t5: ROI core: window, nets, realistic value",
+      "branch": "factory/004-roi-overlap-rules-t5",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T18:32:20"
+    },
+    {
+      "id": "004-roi-overlap-rules-t2",
+      "feature": "004 t2: Overlap rule registry + 3 static rules",
+      "branch": "factory/004-roi-overlap-rules-t2",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t1"
+      ],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T19:25:16"
+    },
+    {
+      "id": "004-roi-overlap-rules-t3",
+      "feature": "004 t3: Priority Pass + Hilton Diamond rules",
+      "branch": "factory/004-roi-overlap-rules-t3",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t2"
+      ],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T20:09:16"
+    },
+    {
+      "id": "004-roi-overlap-rules-t4",
+      "feature": "004 t4: Time-aware Global Entry rule + detectOverlaps export",
+      "branch": "factory/004-roi-overlap-rules-t4",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t2"
+      ],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T20:25:38"
+    },
+    {
+      "id": "004-roi-overlap-rules-t6",
+      "feature": "004 t6: ROI points amounts + retired exclusion",
+      "branch": "factory/004-roi-overlap-rules-t6",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 2,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t5"
+      ],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T22:22:35"
+    },
+    {
+      "id": "004-roi-overlap-rules-t7",
+      "feature": "004 t7: ROI redundant-benefit marking",
+      "branch": "factory/004-roi-overlap-rules-t7",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 1,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t3",
+        "004-roi-overlap-rules-t5"
+      ],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T22:13:56"
+    },
+    {
+      "id": "004-roi-overlap-rules-t8",
+      "feature": "004 t8: Input-contract docs + divergence check",
+      "branch": "factory/004-roi-overlap-rules-t8",
+      "kind": "feature",
+      "stage": "build",
+      "round": 0,
+      "parent": "004-roi-overlap-rules",
+      "depends": [
+        "004-roi-overlap-rules-t4",
+        "004-roi-overlap-rules-t6"
+      ],
+      "reviews": {
+        "security": "pending",
+        "code": "pending",
+        "api": "pending"
+      },
+      "decision": "pending",
+      "updatedAt": "2026-10-18T22:25:37"
+    },
+    {
+      "id": "005-db-schema",
+      "feature": "Database schema, migrations, and health/db wiring",
+      "branch": "factory/005-db-schema",
+      "kind": "feature",
+      "stage": "merged",
+      "round": 2,
+      "parent": null,
+      "depends": [],
+      "reviews": {
+        "security": "PASS",
+        "code": "PASS",
+        "api": "PASS"
+      },
+      "decision": "APPROVE",
+      "updatedAt": "2026-10-18T03:00:00"
     }
   ]
 }

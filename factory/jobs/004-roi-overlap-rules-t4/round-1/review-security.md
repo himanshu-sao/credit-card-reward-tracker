@@ -1,0 +1,7 @@
+VERDICT: PASS
+
+- Pure-function module confirmed: no I/O, no `Date` objects, no new dependencies (zod + existing `src/dates.ts` only), no routes/db/secrets/env in the diff; nothing widens attack surface beyond the local rules package.
+- GE date math is NaN-safe: `addYears`/`compareISO` operate on `parseISO`-validated `YYYY-MM-DD` strings (`packages/rules/src/dates.ts:21-69`); malformed dates throw in `OverlapInputSchema` before `geOverlaps` runs (test `malformed dates reject...` passes). Boundary `asOf − 4y` (coverage end == asOf → `compareISO > 0` false) and future-date edge both verified by passing tests; the Feb-29 clamp in `addYears` only affects year arithmetic, not comparison safety.
+- `input.ts` change verified comment-only: the single hunk is the doc comment on `last_ge_application_date` (line 18) — schema, `superRefine`, and exports untouched; comment now matches the actual never-fires behavior.
+- Composed `detectOverlaps` is injection-neutral: wallet ids are only used as `Set`/`includes` lookups against hard-coded catalog ids; the only strings placed into warnings are static literals and catalog `benefit_id`s — no string interpolation of input into messages, no SQL, no eval, no raw SQL concatenation anywhere in the diff.
+- Double-parse note (input re-validated in `geOverlaps` after `detectStaticOverlaps` already parsed it) is a redundancy/style matter, not a security issue — both parses use the same schema. No secrets, no logs, no card numbers/CVV touched. Tests re-run in the isolated worktree: 12 files, 104 passed.
