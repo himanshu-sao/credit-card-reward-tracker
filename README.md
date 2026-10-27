@@ -35,6 +35,19 @@ pnpm --filter api dev   # http://localhost:4000 — GET /health returns { "statu
 
 Or both at once: `pnpm dev` (parallel across the workspace).
 
+## Testing
+
+Run `pnpm -r test` from the repo root to run every package's Vitest suite.
+
+Run `pnpm install` first — tests need `node_modules` built, including the
+`better-sqlite3` native module.
+
+To run one package's suite, `cd` into its directory and run its test script:
+
+```sh
+cd packages/rules && pnpm test
+```
+
 ## Environment variables
 
 Copy `.env.example` to `.env` (gitignored) at the repo root to override any
